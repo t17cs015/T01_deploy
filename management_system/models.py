@@ -16,8 +16,8 @@ class Customer(models.Model):
 class Request(models.Model):
     scheduled_entry_datetime = models.DateTimeField('date published')
     scheduled_exit_datetime = models.DateTimeField('date published')
-    entry_datetime = models.DateTimeField('date published')
-    exit_datetime = models.DateTimeField('date published')
+    entry_datetime = models.DateTimeField('date published', blank = True)
+    exit_datetime = models.DateTimeField('date published' , blank = True)
     purpose_admission = models.CharField(max_length=255)
     request_datetime = models.DateTimeField('date published')
     email = models.ForeignKey(Customer, on_delete=models.CASCADE)
