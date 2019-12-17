@@ -1,7 +1,9 @@
 from django.http import HttpResponse
 from django.contrib import messages  # メッセージフレームワーク
-from django.shortcuts import redirect
+from django.shortcuts import redirect , render
 from django.utils import timezone
+from django.urls import path # for send mail
+from django.core.mail import BadHeaderError , send_mail
 
 import datetime,pytz,random, string
 
@@ -9,6 +11,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 from .forms import RequestForm
 from .models import Request
+from . import views
 
 class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
@@ -50,9 +53,20 @@ class RequestAddView(CreateView):
     def form_valid(self, form):
         # messages.success(self.request, "保存しました")
         print("保存しました")
+        subject = 'W DC Center'
+        massage = 'hello , world'
+        from_email = 'dbcenterw1@gmail.com'
+        recipient_list = [
+            't17cs015@gmail.com'
+        ]
+        print("send mail")
+        send_mail(subject,massage,from_email,recipient_list)
         return super().form_valid(form)
 
     def form_invalid(self, form):
         # message.warning(self.request, "保存できませんでした")
         print("保存できませんでした")
         return super().form_invalid(form)
+
+    # def send_mail():
+    #     return
