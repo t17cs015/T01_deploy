@@ -45,7 +45,7 @@ class RequestAddView(CreateView):
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
             print("Ill send")
-            return redirect('/management_system', pk=obj.pk)
+            return self.form_valid(form)
 
     def form_valid(self, form):
         # messages.success(self.request, "保存しました")
