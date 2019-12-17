@@ -25,7 +25,7 @@ from .models import Request
 #     tell_number = forms.CharField(max_length=15)
 
 
-class RequestForm(forms.Form):
+class RequestForm(forms.ModelForm):
     # scheduled_entry_datetime = forms.DateTimeField()
     # scheduled_exit_datetime = forms.DateTimeField()
     # entry_datetime = forms.DateTimeField()
@@ -39,5 +39,5 @@ class RequestForm(forms.Form):
 
     class Meta:
         model = Request
-        fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime', 'purpose_admission', 'request_datetime', 'email']
+        fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime', 'purpose_admission',  'email']
 
