@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from django.contrib import messages  # メッセージフレームワーク
 from django.shortcuts import redirect
+from django.utils import timezone
 
-import datetime,random, string
+import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
@@ -38,10 +39,12 @@ class RequestAddView(CreateView):
         form = self.form_class(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
-            now = datetime.datetime.now()
-            obj.request_datetime = now.strftime('%Y-%m-%d %H:%M:%S')
+            # now = datetime.datetime.now(pytz.timezone('UTC'))
+            # obj.request_datetime = now.astimezone().strftime('%Y-%m-%d %H:%M:%S')
+            obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
+            print("Ill send")
             return redirect('/management_system', pk=obj.pk)
 
     def form_valid(self, form):
