@@ -4,7 +4,6 @@ from .views import RequestAddView , RequestMainView
 from . import views
 
 urlpatterns = [
-    # ex: /polls/
     path('', RequestMainView.as_view(), name='index'),
     # ex: /polls/5/
     # path('<int:request_id>/', views.detail, name='detail'),

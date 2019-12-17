@@ -11,7 +11,7 @@ class Customer(models.Model):
     tell_number = models.CharField(max_length=15)
 
     def __str__(self):
-        return self.name
+        return self.email
 
 class Request(models.Model):
     scheduled_entry_datetime = models.DateTimeField('date published')
