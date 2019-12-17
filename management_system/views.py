@@ -4,23 +4,27 @@ from django.shortcuts import redirect
 
 import datetime,random, string
 
-from django.views.generic.edit import CreateView 
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import CreateView
 from .forms import RequestForm
 from .models import Request
 
-def index(request):
+class RequestMainView(TemplateView):
+    template_name = 'management_system/request_main.html'
 
-    return HttpResponse("Hello, world. You're at the management_system index.")
 
-def detail(request, request_id):
-    return HttpResponse("You're looking at request %s." % request_id)
+# def index(request):
+#     # return HttpResponse("Hello, world. You're at the management_system index.")
 
-def results(request, request_id):
-    response = "You're looking at the results of request %s."
-    return HttpResponse(response % request_id)
+# def detail(request, request_id):
+#     return HttpResponse("You're looking at request %s." % request_id)
 
-def vote(request, request_id):
-    return HttpResponse("You're voting on request %s." % request_id)
+# def results(request, request_id):
+#     response = "You're looking at the results of request %s."
+#     return HttpResponse(response % request_id)
+
+# def vote(request, request_id):
+#     return HttpResponse("You're voting on request %s." % request_id)
 
 class RequestAddView(CreateView):
     model = Request
