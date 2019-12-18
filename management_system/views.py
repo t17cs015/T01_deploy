@@ -42,24 +42,25 @@ class RequestAddView(CreateView):
         form = self.form_class(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
-            # now = datetime.datetime.now(pytz.timezone('UTC'))
-            # obj.request_datetime = now.astimezone().strftime('%Y-%m-%d %H:%M:%S')
             obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
             print("Ill send")
-            return self.form_valid(form)
+            return self.form_valid(form,obj)
+        else:
+            return self.form_invalid(form)
 
-    def form_valid(self, form):
+    def form_valid(self, form,obj):
         # messages.success(self.request, "保存しました")
         print("保存しました")
+
         subject = 'W DC Center'
-        massage = 'hello , world'
+        massage = obj.email.name+'さん\n\nW社です\n\nDBセンター利用ご予約を受け取りましたので報告いたします\n\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : '+obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n電話番号 : ' + obj.email.tell_number + '\nこれは予約を保証するものではありません\n申請が取り消される場合がございます'
         from_email = 'dbcenterw1@gmail.com'
         recipient_list = [
-            't17cs015@gmail.com'
+            obj.email.__str__()
         ]
-        print("send mail")
+        # print("send mail")
         send_mail(subject,massage,from_email,recipient_list)
         return super().form_valid(form)
 
@@ -67,6 +68,3 @@ class RequestAddView(CreateView):
         # message.warning(self.request, "保存できませんでした")
         print("保存できませんでした")
         return super().form_invalid(form)
-
-    # def send_mail():
-    #     return
