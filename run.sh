@@ -8,7 +8,7 @@ elif [[ $1 == "mig" ]]; then
     $0 makemigrations management_system && $0 migrate
 elif [[ $1 == "clean" ]]; then
     rm -r db.sqlite3 
-    management_system/migrations/*
+    rm -r management_system/migrations/*
 elif [[ $1 == "adduser" ]]; then
     USER="admin"
     MAIL="admin@myproject.com"
