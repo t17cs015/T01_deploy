@@ -7,9 +7,19 @@ elif [[ $1 == "mig" ]]; then
 elif [[ $1 == "clean" ]]; then
     rm -r db.sqlite3 
     management_system/migrations/*
+elif [[ $1 == "adduser" ]]; then
+    USER="admin"
+    MAIL="admin@myproject.com"
+    PASS="password"
+    (
+        echo "from django.contrib.auth import get_user_model" && \
+        echo "User = get_user_model()" && \
+        echo "User.objects.create_superuser('"$USER"', '"$MAIL"', '"$PASS"')" \
+    ) | $0 shell
 elif [[ $1 == "all" ]]; then
     $0 clean
     $0 mig
+    $0 adduser
 elif [[ $1 == "--help" ]]; then
     echo "使用法 : ./run.sh [オプション]..."
     echo "オプションをつけずに実行すると python3.5 manage.py runserver が実行されます。"
