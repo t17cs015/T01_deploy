@@ -62,8 +62,10 @@ elif [[ $1 == "--help" ]]; then
     echo "オプション"
     echo "  mig                 makemigrations と migrate を同時に実行する"
     echo "  clean               db.sqlit3 と migrations ディレクトリ以下のファイルを削除する"
-    echo "  all                 clean オプションを付けて実行した後に"
-    echo "                      mig オプションを付けて実行したのと同じ結果を与える"
+    echo "  adduser             管理者ユーザーを追加する"
+    echo "  dbinit              データベースにテスト用データを追加する"
+    echo "  all                 強制再マイグレーションを実行し、管理者ユーザーと"
+    echo "                      テスト用データをデータベースに追加しサーバーを実行する"
     echo "  その他オプション    python3.5 manage.py に与えられた引数をそのまま渡して実行する"
 else
     python3.5 manage.py $@
