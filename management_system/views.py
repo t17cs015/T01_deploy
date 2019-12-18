@@ -6,7 +6,7 @@ from django.utils import timezone
 import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView , UpdateView
 from .forms import RequestForm
 from .models import Request
 
@@ -35,7 +35,7 @@ class RequestAddView(CreateView):
     form_class = RequestForm
 
     def post(self, request, *args, **kwargs):
-        context_object_name = 'sample_create'
+        # context_object_name = 'sample_create'
         form = self.form_class(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
@@ -56,3 +56,10 @@ class RequestAddView(CreateView):
         # message.warning(self.request, "保存できませんでした")
         print("保存できませんでした")
         return super().form_invalid(form)
+
+# 実績入力画面 (UC-02)
+class RequestPerformanceView(UpdateView):
+    model = Request
+    form_class = RequestForm
+    template_name = 'management_system/request_performance.html'
+    success_url = '/management_system'
