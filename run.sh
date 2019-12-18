@@ -1,9 +1,11 @@
 #!/bin/sh
 
 if [[ $# == 0 ]]; then
-    python3.5 manage.py runserver
+    $0 runserver
 elif [[ $1 == "mig" ]]; then
-    python3.5 manage.py makemigrations management_system && python3.5 manage.py migrate
+    $0 makemigrations management_system && $0 migrate
+elif [[ $1 == "mig" ]]; then
+    $0 makemigrations management_system && $0 migrate
 elif [[ $1 == "clean" ]]; then
     rm -r db.sqlite3 
     management_system/migrations/*
@@ -66,5 +68,4 @@ elif [[ $1 == "--help" ]]; then
 else
     python3.5 manage.py $@
 fi
-
 
