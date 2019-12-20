@@ -27,7 +27,7 @@ class Request(models.Model):
     email = models.ForeignKey(Customer, on_delete=models.CASCADE)
     # 通し番号はID
     approval = models.IntegerField(default=0)
-    password = models.IntegerField(default=0)
+    password = models.IntegerField(default=None)
 
     # def __str__(self):
     #     return str(self.id)

@@ -8,7 +8,7 @@ import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView , UpdateView
-from .forms import RequestForm , RequestIdForm
+from .forms import RequestForm , RequestIdForm , RequestPasswordForm
 
 
 from .models import Request
@@ -71,6 +71,33 @@ class RequestAddView(CreateView):
 #         self.object = self.get_object()
 #         self.object.save
 #         return HttpResponseRedirect(reverse('/management_system'))
+
+class RequestLoginView(TemplateView):
+    model = Request
+    template_name = 'management_system/request_login.html'
+
+    def post(self, request, *args, **kwargs):
+        request_id = self.request.POST.get('request_id')
+        request = get_object_or_404(Request, pk=request_id)
+        # print(self.request.POST.get("password"))
+        # print(type(self.request.POST.get("password")))
+        # print(request.password)
+        # print(type(request.password))
+        if(int(self.request.POST.get("password")) == request.password ):
+            print('login sucsess')
+            print(request_id)
+            return HttpResponseRedirect(reverse('performance/' + request_id +'/'))
+        else:
+            print('login fail')
+            return HttpResponseRedirect(reverse('main'))
+        
+
+    def get_context_data(self, **kwarg):
+        print('make forms')
+        context = super().get_context_data(**kwarg)
+        context['form_id'] = RequestIdForm()
+        context['form_password'] = RequestPasswordForm()
+        return context
 
 class RequestPerformanceView(TemplateView):
     model = Request

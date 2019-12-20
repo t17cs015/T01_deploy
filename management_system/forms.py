@@ -24,6 +24,9 @@ from .models import Request
 #     organization_name = forms.CharField(max_length=60)
 #     tell_number = forms.CharField(max_length=15)
 
+class RequestIdForm(forms.Form):
+    request_id = forms.IntegerField(label='ID')
+
 class RequestForm(forms.ModelForm):
     # scheduled_entry_datetime = forms.DateTimeField()
     # scheduled_exit_datetime = forms.DateTimeField()
@@ -40,5 +43,7 @@ class RequestForm(forms.ModelForm):
         model = Request
         fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime', 'purpose_admission',  'email']
 
-class RequestIdForm(forms.Form):
-    request_id = forms.IntegerField(label='ID')
+class RequestPasswordForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ['password']
