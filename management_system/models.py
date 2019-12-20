@@ -1,5 +1,6 @@
 import datetime
 
+from django import forms
 from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
@@ -15,6 +16,7 @@ class Customer(models.Model):
     def __str__(self):
         return self.email
 
+
 class Request(models.Model):
     scheduled_entry_datetime = models.DateTimeField('date published')
     scheduled_exit_datetime = models.DateTimeField('date published')
@@ -27,5 +29,5 @@ class Request(models.Model):
     approval = models.IntegerField(default=0)
     password = models.IntegerField(default=0)
 
-    def __str__(self):
-        return str(self.id)
+    # def __str__(self):
+    #     return str(self.id)

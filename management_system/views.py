@@ -1,13 +1,16 @@
-from django.http import HttpResponse
 from django.contrib import messages  # メッセージフレームワーク
-from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect , get_object_or_404
 from django.utils import timezone
+from django.urls import reverse
 
 import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView , UpdateView
-from .forms import RequestForm
+from .forms import RequestForm , RequestIdForm
+
+
 from .models import Request
 
 class RequestMainView(TemplateView):
@@ -31,7 +34,7 @@ class RequestAddView(CreateView):
     model = Request
     # fields = ('scheduled_entry_datetime', 'scheduled_exit_datetime', 'email')
     template_name = 'management_system/request_add.html'
-    success_url = '/management_system'
+    success_url = '/management_system/main'
     form_class = RequestForm
 
     def post(self, request, *args, **kwargs):
@@ -58,8 +61,49 @@ class RequestAddView(CreateView):
         return super().form_invalid(form)
 
 # 実績入力画面 (UC-02)
-class RequestPerformanceView(UpdateView):
+# class RequestPerformanceView(UpdateView):
+#     model = Request
+#     form_class = RequestForm
+#     template_name = 'management_system/request_performance.html'
+#     success_url = '/management_system'
+
+#     def post(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         self.object.save
+#         return HttpResponseRedirect(reverse('/management_system'))
+
+class RequestPerformanceView(TemplateView):
     model = Request
-    form_class = RequestForm
     template_name = 'management_system/request_performance.html'
-    success_url = '/management_system'
+    # form_class = RequestForm
+    success_url = 'main/'
+
+    def post(self, request, *args, **kwargs):
+        request_id = self.request.POST.get('request_id')
+        scheduled_entry_datetime = self.request.POST.get('scheduled_entry_datetime')
+        scheduled_exit_datetime = self.request.POST.get('scheduled_exit_datetime')
+        entry_datetime = self.request.POST.get('entry_datetime')
+
+        request = get_object_or_404(Request, pk=request_id)
+        request.scheduled_entry_datetime = scheduled_entry_datetime
+        request.scheduled_exit_datetime = scheduled_exit_datetime
+        request.entry_datetime = entry_datetime
+        request.save()
+        return HttpResponseRedirect(reverse('main'))
+
+    def get_context_data(self, **kwarg):
+        context = super().get_context_data(**kwarg)
+        print("get")
+        # request_id = kwarg.get("pk")
+        if( kwarg.get("pk") == None ):
+            print("get faulse")
+            context["form_id"] = RequestIdForm()
+            context['form'] = RequestForm()
+            
+        else:  
+            print("get sucsess")
+            context["form_id"] = RequestIdForm(initial={'request_id':kwarg.get("pk")})
+            request = get_object_or_404(Request,pk=kwarg.get("pk"))
+            context['form'] = RequestForm(initial={'scheduled_entry_datetime':request.scheduled_entry_datetime,"scheduled_exit_datetime":request.scheduled_exit_datetime,'request.entry_datetime':request.entry_datetime})
+
+        return context
