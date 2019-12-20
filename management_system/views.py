@@ -1,6 +1,6 @@
 from django.contrib import messages  # メッセージフレームワーク
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect , get_object_or_404
+from django.shortcuts import redirect , get_object_or_404 , render
 from django.utils import timezone
 from django.urls import reverse
 
@@ -85,13 +85,12 @@ class RequestLoginView(TemplateView):
         # print(type(request.password))
         if(int(self.request.POST.get("password")) == request.password ):
             print('login sucsess')
-            print(request_id)
-            return HttpResponseRedirect(reverse('performance/' + request_id +'/'))
+            print('loginId:' + request_id)
+            return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
         else:
             print('login fail')
             return HttpResponseRedirect(reverse('main'))
         
-
     def get_context_data(self, **kwarg):
         print('make forms')
         context = super().get_context_data(**kwarg)
@@ -102,7 +101,6 @@ class RequestLoginView(TemplateView):
 class RequestPerformanceView(TemplateView):
     model = Request
     template_name = 'management_system/request_performance.html'
-    # form_class = RequestForm
     success_url = 'main/'
 
     def post(self, request, *args, **kwargs):
@@ -120,15 +118,15 @@ class RequestPerformanceView(TemplateView):
 
     def get_context_data(self, **kwarg):
         context = super().get_context_data(**kwarg)
-        print('get')
+        print('getRequest')
         # request_id = kwarg.get('pk')
         if( kwarg.get('pk') == None ):
-            print('get faulse')
+            print('get false')
             context['form_id'] = RequestIdForm()
             context['form'] = RequestForm()
             
         else:  
-            print('get sucsess')
+            print('getSucsess')
             context['form_id'] = RequestIdForm(initial={'request_id':kwarg.get('pk')})
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
             context['form'] = RequestForm(initial={
