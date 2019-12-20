@@ -18,17 +18,17 @@ class RequestMainView(TemplateView):
 
 
 # def index(request):
-#     # return HttpResponse("Hello, world. You're at the management_system index.")
+#     # return HttpResponse('Hello, world. You're at the management_system index.')
 
 # def detail(request, request_id):
-#     return HttpResponse("You're looking at request %s." % request_id)
+#     return HttpResponse('You're looking at request %s.' % request_id)
 
 # def results(request, request_id):
-#     response = "You're looking at the results of request %s."
+#     response = 'You're looking at the results of request %s.'
 #     return HttpResponse(response % request_id)
 
 # def vote(request, request_id):
-#     return HttpResponse("You're voting on request %s." % request_id)
+#     return HttpResponse('You're voting on request %s.' % request_id)
 
 class RequestAddView(CreateView):
     model = Request
@@ -47,17 +47,17 @@ class RequestAddView(CreateView):
             obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
-            print("Ill send")
+            print('Ill send')
             return self.form_valid(form)
 
     def form_valid(self, form):
-        # messages.success(self.request, "保存しました")
-        print("保存しました")
+        # messages.success(self.request, '保存しました')
+        print('保存しました')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        # message.warning(self.request, "保存できませんでした")
-        print("保存できませんでした")
+        # message.warning(self.request, '保存できませんでした')
+        print('保存できませんでした')
         return super().form_invalid(form)
 
 # 実績入力画面 (UC-02)
@@ -93,17 +93,20 @@ class RequestPerformanceView(TemplateView):
 
     def get_context_data(self, **kwarg):
         context = super().get_context_data(**kwarg)
-        print("get")
-        # request_id = kwarg.get("pk")
-        if( kwarg.get("pk") == None ):
-            print("get faulse")
-            context["form_id"] = RequestIdForm()
+        print('get')
+        # request_id = kwarg.get('pk')
+        if( kwarg.get('pk') == None ):
+            print('get faulse')
+            context['form_id'] = RequestIdForm()
             context['form'] = RequestForm()
             
         else:  
-            print("get sucsess")
-            context["form_id"] = RequestIdForm(initial={'request_id':kwarg.get("pk")})
-            request = get_object_or_404(Request,pk=kwarg.get("pk"))
-            context['form'] = RequestForm(initial={'scheduled_entry_datetime':request.scheduled_entry_datetime,"scheduled_exit_datetime":request.scheduled_exit_datetime,'request.entry_datetime':request.entry_datetime})
+            print('get sucsess')
+            context['form_id'] = RequestIdForm(initial={'request_id':kwarg.get('pk')})
+            request = get_object_or_404(Request,pk=kwarg.get('pk'))
+            context['form'] = RequestForm(initial={
+                'scheduled_entry_datetime':request.scheduled_entry_datetime,
+                'scheduled_exit_datetime':request.scheduled_exit_datetime,
+                'request.entry_datetime':request.entry_datetime})
 
         return context
