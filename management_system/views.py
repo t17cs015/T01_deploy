@@ -78,17 +78,17 @@ class RequestLoginView(TemplateView):
     def post(self, request, *args, **kwargs):
         request_id = self.request.POST.get('request_id')
         request = get_object_or_404(Request, pk=request_id)
-        # print(self.request.POST.get("password"))
-        # print(type(self.request.POST.get("password")))
-        # print(request.password)
-        # print(type(request.password))
+        print(self.request.POST.get("password"))
+        print(type(self.request.POST.get("password")))
+        print(request.password)
+        print(type(request.password))
         if(int(self.request.POST.get("password")) == request.password ):
             print('login sucsess')
             print('loginId:' + request_id)
             return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
         else:
             print('login fail')
-            return HttpResponseRedirect(reverse('main'))
+            return HttpResponseRedirect(reverse('login'))
         
     def get_context_data(self, **kwarg):
         print('make forms')
@@ -102,6 +102,7 @@ class RequestPerformanceView(TemplateView):
     model = Request
     template_name = 'management_system/request_performance.html'
     success_url = 'main/'
+    request_id = 0
 
     def post(self, request, *args, **kwargs):
         request_id = self.request.POST.get('request_id')
@@ -129,17 +130,32 @@ class RequestPerformanceView(TemplateView):
             print('getSucsess')
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
             customer = get_object_or_404(Customer,pk=request.request_id)
-            context= self.get_context_data(request=request,customer = customer)
-            context['form_id'] = RequestIdForm(initial={'request_id':kwarg.get('pk')})
+            # context= self.get_context_data(request=request,customer = customer)
+            context['form_id'] = {'request_id':kwarg.get('pk')}
 
-            context['form_request'] = RequestGetForm(initial={
-                'email':request.email,
-                'scheduled_entry_datetime':request.scheduled_entry_datetime,
-                'scheduled_exit_datetime':request.scheduled_exit_datetime,
-                'request.entry_datetime':request.entry_datetime,
-                })
-            context['form_customer'] = CustomerForm(initial={
-                'organization_name':customer.organization_name,
+            context['form_request'] = request
+            # RequestGetForm(initial={
+            #     'email':request.email,
+            #     'scheduled_entry_datetime':request.scheduled_entry_datetime,
+            #     'scheduled_exit_datetime':request.scheduled_exit_datetime,
+            #     'request.entry_datetime':request.entry_datetime,
+            #     })
+            context['form_customer'] = customer
+            # CustomerForm(initial={
+            #     'organization_name':customer.organization_name,
 
-            })
+            # })
         return context
+
+    def entry(self, **kwargs):
+        print("entry")
+        print(kwargs)
+        request_id = self.request.POST.get("request_id")
+        request = get_object_or_404(Request, pk=request_id)
+        request.entry_datetime = timezone.localtime()
+        request.save()
+
+        return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
+
+    def exit(self, **kwargs):
+        return

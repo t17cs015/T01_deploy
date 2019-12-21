@@ -5,16 +5,44 @@
  {% block main %}
  <form method='post'>
  {% csrf_token %}
- <table>
-    {{ form_id.as_table }}
-    {{ form_request.as_table }}
-    {{ form_customer.as_table }}
 
-    
+<h4 class="ui horizontal divider header"><i class="bar chart icon"></i> 申請内容 </h4>
+<table class="ui definition table">
+  <tbody>
+    <tr>
+      <td class="two wide column">ID</td>
+      <td>{{form_id.request_id}}</td>
+    </tr>
+    <tr>
+      <td>sosikimei</td>
+      <td>{{form_customer.organization_name}} </td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td>{{form_customer.name}} </td>
+    </tr>
+    <tr>
+      <td>tellnumber</td>
+      <td>{{form_customer.tell_number}} </td>
+    </tr>
+    <tr>
+      <td>email</td>
+      <td>{{form_customer.email}} </td>
+    </tr>
+    <tr>
+      <td>入館予定日時</td>
+      <td>{{form_request.scheduled_entry_datetime}} </td>
+    </tr>
+    <tr>
+      <td>退館予定日時</td>
+      <td>{{form_request.scheduled_exit_datetime}}</td>
+    </tr>
+  </tbody>
 </table>
 
-</table>
- <input type='submit'/>
+<button class="ui blue button" type = "entry/" onclick='return confirm("本当に削除しますか？");'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">entry</font></font></button>
+<button class="ui red button" type = "exit/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">exit</font></font></button>
+<!-- <input type='submit'/> -->
  </form>
  {% endblock %}
 
