@@ -8,10 +8,10 @@ import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView , UpdateView
-from .forms import RequestForm , RequestIdForm , RequestPasswordForm
+from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm
+from .forms import CustomerForm
 
-
-from .models import Request
+from .models import Request , Customer
 
 class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
@@ -40,6 +40,7 @@ class RequestAddView(CreateView):
     def post(self, request, *args, **kwargs):
         # context_object_name = 'sample_create'
         form = self.form_class(request.POST)
+        # print(form)
         if form.is_valid():
             obj = form.save(commit=False)
             # now = datetime.datetime.now(pytz.timezone('UTC'))
@@ -47,8 +48,17 @@ class RequestAddView(CreateView):
             obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
+            print('save')
+            obj.request_id = obj.id
+            print('dainyuu')
+            obj.save()
+            
+            print(obj.id)
+            print(obj.request_id)
             print('Ill send')
             return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
     def form_valid(self, form):
         # messages.success(self.request, '保存しました')
@@ -61,17 +71,6 @@ class RequestAddView(CreateView):
         return super().form_invalid(form)
 
 # 実績入力画面 (UC-02)
-# class RequestPerformanceView(UpdateView):
-#     model = Request
-#     form_class = RequestForm
-#     template_name = 'management_system/request_performance.html'
-#     success_url = '/management_system'
-
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         self.object.save
-#         return HttpResponseRedirect(reverse('/management_system'))
-
 class RequestLoginView(TemplateView):
     model = Request
     template_name = 'management_system/request_login.html'
@@ -98,6 +97,7 @@ class RequestLoginView(TemplateView):
         context['form_password'] = RequestPasswordForm()
         return context
 
+# 実績入力画面 (UC-02)
 class RequestPerformanceView(TemplateView):
     model = Request
     template_name = 'management_system/request_performance.html'
@@ -119,19 +119,27 @@ class RequestPerformanceView(TemplateView):
     def get_context_data(self, **kwarg):
         context = super().get_context_data(**kwarg)
         print('getRequest')
-        # request_id = kwarg.get('pk')
+
         if( kwarg.get('pk') == None ):
             print('get false')
-            context['form_id'] = RequestIdForm()
-            context['form'] = RequestForm()
+            # context['form_id'] = RequestIdForm()
+            # context['form'] = RequestForm()
             
         else:  
             print('getSucsess')
-            context['form_id'] = RequestIdForm(initial={'request_id':kwarg.get('pk')})
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
-            context['form'] = RequestForm(initial={
+            customer = get_object_or_404(Customer,pk=request.request_id)
+            context= self.get_context_data(request=request,customer = customer)
+            context['form_id'] = RequestIdForm(initial={'request_id':kwarg.get('pk')})
+
+            context['form_request'] = RequestGetForm(initial={
+                'email':request.email,
                 'scheduled_entry_datetime':request.scheduled_entry_datetime,
                 'scheduled_exit_datetime':request.scheduled_exit_datetime,
-                'request.entry_datetime':request.entry_datetime})
+                'request.entry_datetime':request.entry_datetime,
+                })
+            context['form_customer'] = CustomerForm(initial={
+                'organization_name':customer.organization_name,
 
+            })
         return context

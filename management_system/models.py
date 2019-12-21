@@ -14,20 +14,20 @@ class Customer(models.Model):
     tell_number = models.CharField(validators=[tell_number_validator], max_length = 19, verbose_name = '電話番号', blank=False)
 
     def __str__(self):
-        return self.email
+        return str(self.email)
 
 
 class Request(models.Model):
-    scheduled_entry_datetime = models.DateTimeField('date published')
-    scheduled_exit_datetime = models.DateTimeField('date published')
+    scheduled_entry_datetime = models.DateTimeField('date published',blank = False,null=False)
+    scheduled_exit_datetime = models.DateTimeField('date published',blank = False,null=False)
     entry_datetime = models.DateTimeField('date published', blank = True,null = True)
     exit_datetime = models.DateTimeField('date published' , blank = True,null = True)
     purpose_admission = models.CharField(max_length=255)
     request_datetime = models.DateTimeField('date published')
     email = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    # 通し番号はID
+    request_id = models.IntegerField(blank = True,null = True)
     approval = models.IntegerField(default=0)
     password = models.IntegerField(default=None)
 
-    # def __str__(self):
-    #     return str(self.id)
+    def __str__(self):
+        return "{} ({})".format(self.request_id , self.email)

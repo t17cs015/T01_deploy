@@ -7,7 +7,12 @@
  {% csrf_token %}
  <table>
     {{ form_id.as_table }}
-    {{ form.as_table }}
+    {{ form_request.as_table }}
+    {{ form_customer.as_table }}
+
+    
+</table>
+
 </table>
  <input type='submit'/>
  </form>
