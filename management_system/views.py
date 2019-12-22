@@ -102,19 +102,40 @@ class RequestPerformanceView(TemplateView):
     model = Request
     template_name = 'management_system/request_performance.html'
     success_url = 'main/'
-    request_id = 0
 
     def post(self, request, *args, **kwargs):
-        request_id = self.request.POST.get('request_id')
-        scheduled_entry_datetime = self.request.POST.get('scheduled_entry_datetime')
-        scheduled_exit_datetime = self.request.POST.get('scheduled_exit_datetime')
-        entry_datetime = self.request.POST.get('entry_datetime')
+        print(request.POST)
+        if 'hello' in request.POST:
+            print('hello')
 
-        request = get_object_or_404(Request, pk=request_id)
-        request.scheduled_entry_datetime = scheduled_entry_datetime
-        request.scheduled_exit_datetime = scheduled_exit_datetime
-        request.entry_datetime = entry_datetime
+        print("entry")
+        print("self")
+        print(self)
+        print("request")
+        print(request)
+        print("args")
+        print(args)
+        print("kwargs")
+        print(kwargs)
+        request = get_object_or_404(Request,pk=kwargs.get('pk'))
+        request.entry_datetime = timezone.localtime()
         request.save()
+        print (request)
+        
+        #         request_id = self.request.POST.get("request_id")
+        # request = get_object_or_404(Request, pk=request_id)
+        # request.entry_datetime = timezone.localtime()
+
+        # request_id = self.request.POST.get('request_id')
+        # scheduled_entry_datetime = self.request.POST.get('scheduled_entry_datetime')
+        # scheduled_exit_datetime = self.request.POST.get('scheduled_exit_datetime')
+        # entry_datetime = self.request.POST.get('entry_datetime')
+
+        # request = get_object_or_404(Request, pk=request_id)
+        # request.scheduled_entry_datetime = scheduled_entry_datetime
+        # request.scheduled_exit_datetime = scheduled_exit_datetime
+        # request.entry_datetime = entry_datetime
+        # request.save()
         return HttpResponseRedirect(reverse('main'))
 
     def get_context_data(self, **kwarg):
@@ -147,15 +168,14 @@ class RequestPerformanceView(TemplateView):
             # })
         return context
 
-    def entry(self, **kwargs):
-        print("entry")
-        print(kwargs)
-        request_id = self.request.POST.get("request_id")
-        request = get_object_or_404(Request, pk=request_id)
-        request.entry_datetime = timezone.localtime()
-        request.save()
+    # def entry(self, **kwargs):
+    #     request_id = self.request.POST.get("request_id")
+    #     request = get_object_or_404(Request, pk=request_id)
+    #     request.entry_datetime = timezone.localtime()
+    #     request.save()
 
-        return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
+    #     return request_id
+    #     # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
 
-    def exit(self, **kwargs):
-        return
+    # def exit(self, **kwargs):
+    #     return
