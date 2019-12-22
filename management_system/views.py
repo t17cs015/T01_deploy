@@ -16,20 +16,6 @@ from .models import Request , Customer
 class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
 
-
-# def index(request):
-#     # return HttpResponse('Hello, world. You're at the management_system index.')
-
-# def detail(request, request_id):
-#     return HttpResponse('You're looking at request %s.' % request_id)
-
-# def results(request, request_id):
-#     response = 'You're looking at the results of request %s.'
-#     return HttpResponse(response % request_id)
-
-# def vote(request, request_id):
-#     return HttpResponse('You're voting on request %s.' % request_id)
-
 class RequestAddView(CreateView):
     model = Request
     # fields = ('scheduled_entry_datetime', 'scheduled_exit_datetime', 'email')
@@ -43,8 +29,6 @@ class RequestAddView(CreateView):
         # print(form)
         if form.is_valid():
             obj = form.save(commit=False)
-            # now = datetime.datetime.now(pytz.timezone('UTC'))
-            # obj.request_datetime = now.astimezone().strftime('%Y-%m-%d %H:%M:%S')
             obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
@@ -78,11 +62,11 @@ class RequestLoginView(TemplateView):
     def post(self, request, *args, **kwargs):
         request_id = self.request.POST.get('request_id')
         request = get_object_or_404(Request, pk=request_id)
-        print(self.request.POST.get("password"))
-        print(type(self.request.POST.get("password")))
+        print(self.request.POST.get('password'))
+        print(type(self.request.POST.get('password')))
         print(request.password)
         print(type(request.password))
-        if(int(self.request.POST.get("password")) == request.password ):
+        if(int(self.request.POST.get('password')) == request.password ):
             print('login sucsess')
             print('loginId:' + request_id)
             return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
@@ -104,25 +88,29 @@ class RequestPerformanceView(TemplateView):
     success_url = 'main/'
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
-        if 'hello' in request.POST:
-            print('hello')
-
-        print("entry")
-        print("self")
+            
+        print('entry')
+        print('self')
         print(self)
-        print("request")
+        print('request')
         print(request)
-        print("args")
+        print('args')
         print(args)
-        print("kwargs")
+        print('kwargs')
         print(kwargs)
+
         request = get_object_or_404(Request,pk=kwargs.get('pk'))
-        request.entry_datetime = timezone.localtime()
+        if(request.entry_datetime==None):
+            request.entry_datetime = timezone.localtime()
+        elif(request.exit_datetime==None):
+            request.exit_datetime = timezone.localtime()
+        else:
+            print('already logined')
+            return HttpResponseRedirect(reverse('main'))
         request.save()
         print (request)
         
-        #         request_id = self.request.POST.get("request_id")
+        #         request_id = self.request.POST.get('request_id')
         # request = get_object_or_404(Request, pk=request_id)
         # request.entry_datetime = timezone.localtime()
 
@@ -136,7 +124,7 @@ class RequestPerformanceView(TemplateView):
         # request.scheduled_exit_datetime = scheduled_exit_datetime
         # request.entry_datetime = entry_datetime
         # request.save()
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse('login'))
 
     def get_context_data(self, **kwarg):
         context = super().get_context_data(**kwarg)
@@ -151,31 +139,27 @@ class RequestPerformanceView(TemplateView):
             print('getSucsess')
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
             customer = get_object_or_404(Customer,pk=request.request_id)
-            # context= self.get_context_data(request=request,customer = customer)
             context['form_id'] = {'request_id':kwarg.get('pk')}
-
             context['form_request'] = request
-            # RequestGetForm(initial={
-            #     'email':request.email,
-            #     'scheduled_entry_datetime':request.scheduled_entry_datetime,
-            #     'scheduled_exit_datetime':request.scheduled_exit_datetime,
-            #     'request.entry_datetime':request.entry_datetime,
-            #     })
             context['form_customer'] = customer
-            # CustomerForm(initial={
-            #     'organization_name':customer.organization_name,
+            if(request.entry_datetime == None):
+                context['form_message'] = "入館"
+            elif(request.exit_datetime==None):
+                context['form_message'] = "退館"
+            else:
+                print('already logined')
 
-            # })
         return context
 
-    # def entry(self, **kwargs):
-    #     request_id = self.request.POST.get("request_id")
-    #     request = get_object_or_404(Request, pk=request_id)
-    #     request.entry_datetime = timezone.localtime()
-    #     request.save()
+    def entry(self, **kwargs):
+        print('hello')
+        request_id = self.request.POST.get('request_id')
+        request = get_object_or_404(Request, pk=request_id)
+        request.entry_datetime = timezone.localtime()
+        request.save()
 
-    #     return request_id
-    #     # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
+        return request_id
+        # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
 
-    # def exit(self, **kwargs):
-    #     return
+    def exit(self, **kwargs):
+        return

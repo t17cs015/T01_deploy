@@ -39,9 +39,13 @@
     </tr>
   </tbody>
 </table>
-
-<button class="ui blue button" type = "submit/" value = 'hello' onclick='return confirm("本当に削除しますか？");'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">entry</font></font></button>
-<button class="ui red button" type = "subumit/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">exit</font></font></button>
+{% ifequal form_message "入館" %}
+<button class="ui blue button" type = "submit/" value = 'enter' onclick='return confirm("入館します");'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館 </font></font></button>
+<button class="ui black button" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館</font></font></button>
+{% else %}
+<button class="ui black button" type = "subumit/" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館</font></font></button>
+<button class="ui red button" value = 'enter' onclick='return confirm("退館します");'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館 </font></font></button>
+{%endifequal%}
 <!-- <input type='submit'/> -->
  </form>
  {% endblock %}
