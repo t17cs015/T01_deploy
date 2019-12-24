@@ -52,7 +52,7 @@ class RequestAddView(CreateView):
         print("保存しました")
 
         subject = 'W DC Center'
-        massage = obj.email.name+'さん\n\nW社です\n\nDBセンター利用ご予約を受け取りましたので報告いたします\n\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : '+obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n電話番号 : ' + obj.email.tell_number + '\nこれは予約を保証するものではありません\n申請が取り消される場合がございます'
+        massage = obj.email.name+'さん\n\nW社です\n\nDBセンター利用ご予約を受け取りましたので報告いたします\n\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : '+obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n電話番号 : ' + obj.email.tell_number + '\n\n管理者が確認後、再度、メールを送信します\n本メールは自動送信により内容の確認を行うものであって、予約を保証するものではありません\n申請が取り消される場合がございます'
         from_email = 'dbcenterw1@gmail.com'
         recipient_list = [
             obj.email.__str__()
