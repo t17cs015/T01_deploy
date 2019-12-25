@@ -6,7 +6,8 @@
  <form action="{% url 'add' %}" method="post">
  {% csrf_token %}
  <table>
-    {{ form.as_table }}
+{{form.as_table}}
+
 </table>
  <input type="submit"/>
  </form>

@@ -9,6 +9,7 @@ import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from . import views
+from extra_views import CreateWithInlinesView , InlineFormSet
 from django.views.generic.edit import CreateView , UpdateView
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm
 from .forms import CustomerForm
@@ -19,11 +20,22 @@ class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
 
 # 入館申請画面 (UC-01)
-class RequestAddView(CreateView):
+class CustomerInlineFormSet(InlineFormSet):
+    model = Customer
+    fields = ('email','name','organization_name','tell_number')
+    can_delate = False
+class RequestAddView(CreateWithInlinesView):
     model = Request
     template_name = 'management_system/request_add.html'
+    inlines = [CustomerInlineFormSet]
     success_url = '/management_system'
     form_class = RequestForm
+
+//request と　customer はもしかして逆？
+
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        return super(CreateWithInlinesView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         # context_object_name = 'sample_create'
@@ -61,6 +73,7 @@ class RequestAddView(CreateView):
         send_mail(subject,massage,from_email,recipient_list)
 
         return super().form_valid(form)
+    
 
 # 実績入力画面 (UC-02)
 class RequestLoginView(TemplateView):
