@@ -21,9 +21,8 @@ class RequestMainView(TemplateView):
 # 入館申請画面 (UC-01)
 class RequestAddView(CreateView):
     model = Request
-    # fields = ('scheduled_entry_datetime', 'scheduled_exit_datetime', 'email')
     template_name = 'management_system/request_add.html'
-    success_url = '/management_system/main'
+    success_url = '/management_system'
     form_class = RequestForm
 
     def post(self, request, *args, **kwargs):
@@ -43,14 +42,14 @@ class RequestAddView(CreateView):
             
             print(obj.id)
             print(obj.request_id)
-            print("Ill send")
+            print('Ill send')
             return self.form_valid(form,obj)
         else:
             return self.form_invalid(form)
 
     def form_valid(self, form,obj):
-        # messages.success(self.request, "保存しました")
-        print("保存しました")
+        # messages.success(self.request, '保存しました')
+        print('保存しました')
 
         subject = 'W DC Center'
         massage = obj.email.name+'さん\n\nW社です\n\nDBセンター利用ご予約を受け取りましたので報告いたします\n\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : '+obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n電話番号 : ' + obj.email.tell_number + '\n\n管理者が確認後、再度、メールを送信します\n本メールは自動送信により内容の確認を行うものであって、予約を保証するものではありません\n申請が取り消される場合がございます'
@@ -58,7 +57,7 @@ class RequestAddView(CreateView):
         recipient_list = [
             obj.email.__str__()
         ]
-        # print("send mail")
+        # print('send mail')
         send_mail(subject,massage,from_email,recipient_list)
 
         return super().form_valid(form)
@@ -94,7 +93,7 @@ class RequestLoginView(TemplateView):
 class RequestPerformanceView(TemplateView):
     model = Request
     template_name = 'management_system/request_performance.html'
-    success_url = 'main/'
+    success_url = ''
 
     def post(self, request, *args, **kwargs):
             
@@ -115,7 +114,7 @@ class RequestPerformanceView(TemplateView):
             request.exit_datetime = timezone.localtime()
         else:
             print('already logined')
-            return HttpResponseRedirect(reverse('main'))
+            return HttpResponseRedirect(reverse(''))
         request.save()
         print (request)
         
@@ -152,9 +151,9 @@ class RequestPerformanceView(TemplateView):
             context['form_request'] = request
             context['form_customer'] = customer
             if(request.entry_datetime == None):
-                context['form_message'] = "入館"
+                context['form_message'] = '入館'
             elif(request.exit_datetime==None):
-                context['form_message'] = "退館"
+                context['form_message'] = '退館'
             else:
                 print('already logined')
 
