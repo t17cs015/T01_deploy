@@ -18,6 +18,7 @@ from .models import Request , Customer
 class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
 
+# 入館申請画面 (UC-01)
 class RequestAddView(CreateView):
     model = Request
     # fields = ('scheduled_entry_datetime', 'scheduled_exit_datetime', 'email')
