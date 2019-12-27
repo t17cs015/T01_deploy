@@ -163,3 +163,25 @@ class RequestPerformanceView(TemplateView):
 
     def exit(self, **kwargs):
         return
+    
+    
+class RequestFixView(TemplateView):
+    model = Request
+    template_name = 'management_system/request_fix.html'
+    success_url = 'main/'
+
+    def post(self, request, *args, **kwargs):
+        request_id = self.request.POST.get('request_id')
+        request.entry_datetime = timezone.localtime() 
+
+        
+        request = get_object_or_404(Request, pk=request_id)
+        request.save()
+        return HttpResponseRedirect(reverse('main'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_id'] = RequestIdForm()
+        context['form'] = CustomerForm()
+        
+        return context

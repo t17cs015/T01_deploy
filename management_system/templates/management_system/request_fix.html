@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %} Fix {% endblock %}
+
+{% block main %}
+<form action="{% url 'fix' %}" method="post">
+{% csrf_token %}
+<table>
+    {{ form_id.as_table }}
+</table>
+<input type="submit"/>
+</form>
+{% endblock %} 
