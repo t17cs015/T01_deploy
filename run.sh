@@ -7,9 +7,52 @@ elif [[ $1 == "mig" ]]; then
 elif [[ $1 == "clean" ]]; then
     rm -r db.sqlite3 
     management_system/migrations/*
+elif [[ $1 == "adduser" ]]; then
+    USER="admin"
+    MAIL="admin@myproject.com"
+    PASS="password"
+    (
+        echo "from django.contrib.auth import get_user_model" && \
+        echo "User = get_user_model()" && \
+        echo "User.objects.create_superuser('"$USER"', '"$MAIL"', '"$PASS"')" \
+    ) | $0 shell
+elif [[ $1 == "dbinit" ]]; then
+    (
+        echo "from management_system.models import Customer, Request" && \
+        echo "c = Customer(" && \
+        echo "email = \"t17cs015@gmail.com\"," && \
+        echo "name = \"帯津勇斗\"," && \
+        echo "organization_name = \"University of Yamanashi\"," && \
+        echo "tell_number = \"000-000-0000\"" && \
+        echo "); c.save()" && \
+        echo "r = Request(" && \
+        echo "scheduled_entry_datetime = \"2019-10-10 00:00:00\"," && \
+        echo "scheduled_exit_datetime = \"2019-10-11 00:30:00\"," && \
+        echo "purpose_admission = \"test\"," && \
+        echo "request_datetime = \"1946-11-12\"," && \
+        echo "email = c" && \
+        echo "); r.save()" && \
+        echo "c = Customer(" && \
+        echo "email = \"software17cs027@gmail.com\"," && \
+        echo "name = \"keisuke sinohara\"," && \
+        echo "organization_name = \"University of Yamanashi\"," && \
+        echo "tell_number = \"000-000-0000\"" && \
+        echo "); c.save()" && \
+        echo "r = Request(" && \
+        echo "scheduled_entry_datetime = \"2019-10-10 01:40:00\"," && \
+        echo "scheduled_exit_datetime = \"2019-10-11 00:41:59\"," && \
+        echo "purpose_admission = \"テスト\"," && \
+        echo "request_datetime = \"1946-10-12\"," && \
+        echo "email = c" && \
+        echo "); r.save()" && \
+        echo "" \
+    ) | $0 shell
 elif [[ $1 == "all" ]]; then
     $0 clean
     $0 mig
+    $0 adduser
+    $0 dbinit
+    $0
 elif [[ $1 == "--help" ]]; then
     echo "使用法 : ./run.sh [オプション]..."
     echo "オプションをつけずに実行すると python3.5 manage.py runserver が実行されます。"
