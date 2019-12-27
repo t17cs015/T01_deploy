@@ -35,8 +35,10 @@ elif [[ $1 == "dbinit" ]]; then
         echo "scheduled_entry_datetime = \"2019-10-10 00:00:00\"," && \
         echo "scheduled_exit_datetime = \"2019-10-11 00:30:00\"," && \
         echo "purpose_admission = \"test\"," && \
-        echo "request_datetime = \"1946-11-12\"," && \
-        echo "email = c" && \
+        echo "request_datetime = \"1946-11-12 00:00:00\"," && \
+        echo "email = c," && \
+        echo "request_id = 0," && \
+        echo "password = 1234" && \
         echo "); r.save()" && \
         echo "c = Customer(" && \
         echo "email = \"software17cs027@gmail.com\"," && \
@@ -48,8 +50,10 @@ elif [[ $1 == "dbinit" ]]; then
         echo "scheduled_entry_datetime = \"2019-10-10 01:40:00\"," && \
         echo "scheduled_exit_datetime = \"2019-10-11 00:41:59\"," && \
         echo "purpose_admission = \"テスト\"," && \
-        echo "request_datetime = \"1946-10-12\"," && \
-        echo "email = c" && \
+        echo "request_datetime = \"1946-10-12 00:00:00\"," && \
+        echo "email = c," && \
+        echo "request_id = 1," && \
+        echo "password = 1234" && \
         echo "); r.save()" && \
         echo "" \
     ) | $0 shell
