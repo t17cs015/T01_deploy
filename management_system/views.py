@@ -3,13 +3,16 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect , get_object_or_404 , render
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView , UpdateView
+from django.views.generic import ListView
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm
-from .forms import CustomerForm
+from .forms import CustomerForm, AdminLoginForm
 
 from .models import Request , Customer
 
@@ -163,3 +166,15 @@ class RequestPerformanceView(TemplateView):
 
     def exit(self, **kwargs):
         return
+
+class AdminLoginView(LoginView):
+    form_class = AdminLoginForm
+    next = 'admin_list'
+    template_name = 'management_system/admin_login.html'
+
+class RequestListView(LoginRequiredMixin, ListView):
+    model = Request
+    login_url = 'admin_login'
+    template_name = 'management_system/admin_list.html'
+
+
