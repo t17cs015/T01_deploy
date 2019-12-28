@@ -60,6 +60,7 @@ class RequestAddView(CreateView):
             print(request)
             print('customer')
             print(customer)
+            print(customer.tell_number)
             if(customer.name == name and customer.organization_name == organization_name and customer.tell_number == tell_number):
                 # そのままcustomerを使う
                 print('true')
@@ -68,7 +69,9 @@ class RequestAddView(CreateView):
                 print('false')
 
             # ここからCustomerをRequestに保持させる
-            
+            obj.email = customer
+
+
             obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
