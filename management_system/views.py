@@ -20,12 +20,11 @@ class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
 
 # 入館申請画面 (UC-01)
-
 class RequestAddView(CreateView):
-    model = Customer
+    model = Request
     template_name = 'management_system/request_add.html'
     success_url = '/management_system'
-    form_class = CustomerForm
+    form_class = RequestForm
 
     def get_context_data(self,**kwargs):
         context = super(CreateView, self).get_context_data(**kwargs)
@@ -35,11 +34,35 @@ class RequestAddView(CreateView):
         return context
 
     def post(self, request, *args, **kwargs):
+        print('self')
+        print(self)
+        print('request')
+        print(request)
+        print('args')
+        print(args)
+        print('kwargs')
+        print(kwargs)
         # context_object_name = 'sample_create'
         form = self.form_class(request.POST)
-        # print(form)
+        name = self.request.POST.get('name')
+        email = self.request.POST.get('email')
+        organization_name = self.request.POST.get('organization_name')
+        tell_number = self.request.POST.get('tell_number')
+        print('form')
+        print(form)
+        
         if form.is_valid():
             obj = form.save(commit=False)
+            print('obj')
+            print(obj)
+            obj_Customer = CustomerForm()
+            obj_Customer.name = obj.name
+            obj_Customer.email = obj.email            
+            obj_Customer.tell_number = obj.tell_number
+            obj_Customer.organization_name = obj.organization_name
+            print('obj_Cus')
+            print(obj_Customer)
+
             obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
