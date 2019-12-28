@@ -53,14 +53,23 @@ class RequestAddView(CreateView):
 
         if form.is_valid():
             obj = form.save(commit=False)
-            # print('obj')
-            # print(obj)
-            customer = Customer.objects.get(pk=email)
+            # emailに該当するものをすべて取得
+            customers = Customer.objects.filter(pk=email)
+
+            if(customers.first() == None):
+                print('なかったよ')
+            else:
+                print('あったよ')
             print('request')
             print(request)
-            print('customer')
-            print(customer)
-            print(customer.tell_number)
+            print('customers')
+            print(customers)
+
+# queryset の解決から
+
+
+
+            print(customers.tell_number)
             if(customer.name == name and customer.organization_name == organization_name and customer.tell_number == tell_number):
                 # そのままcustomerを使う
                 print('true')
