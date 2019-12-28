@@ -6,8 +6,8 @@
  <form action="{% url 'add' %}" method="post">
  {% csrf_token %}
  <table>
-{{form.as_table}}
-
+{{form_Customer.as_table}}
+{{form_Request.as_table}}
 </table>
  <input type="submit"/>
  </form>

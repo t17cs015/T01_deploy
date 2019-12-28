@@ -20,22 +20,19 @@ class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
 
 # 入館申請画面 (UC-01)
-class CustomerInlineFormSet(InlineFormSet):
+
+class RequestAddView(CreateView):
     model = Customer
-    fields = ('email','name','organization_name','tell_number')
-    can_delate = False
-class RequestAddView(CreateWithInlinesView):
-    model = Request
     template_name = 'management_system/request_add.html'
-    inlines = [CustomerInlineFormSet]
     success_url = '/management_system'
-    form_class = RequestForm
+    form_class = CustomerForm
 
-//request と　customer はもしかして逆？
-
-    def get(self, request, *args, **kwargs):
-        self.object = None
-        return super(CreateWithInlinesView, self).get(request, *args, **kwargs)
+    def get_context_data(self,**kwargs):
+        context = super(CreateView, self).get_context_data(**kwargs)
+        context['form_Request'] = RequestForm()
+        context['form_Customer'] = CustomerForm()
+        print(context)
+        return context
 
     def post(self, request, *args, **kwargs):
         # context_object_name = 'sample_create'
