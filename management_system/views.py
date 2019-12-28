@@ -50,19 +50,25 @@ class RequestAddView(CreateView):
         tell_number = self.request.POST.get('tell_number')
         print('form')
         print(form)
-        
+
         if form.is_valid():
             obj = form.save(commit=False)
-            print('obj')
-            print(obj)
-            obj_Customer = CustomerForm()
-            obj_Customer.name = obj.name
-            obj_Customer.email = obj.email            
-            obj_Customer.tell_number = obj.tell_number
-            obj_Customer.organization_name = obj.organization_name
-            print('obj_Cus')
-            print(obj_Customer)
+            # print('obj')
+            # print(obj)
+            customer = Customer.objects.get(pk=email)
+            print('request')
+            print(request)
+            print('customer')
+            print(customer)
+            if(customer.name == name and customer.organization_name == organization_name and customer.tell_number == tell_number):
+                # そのままcustomerを使う
+                print('true')
+            else:
+                # Customerを入力のものと置き換える
+                print('false')
 
+            # ここからCustomerをRequestに保持させる
+            
             obj.request_datetime = timezone.localtime()
             obj.password = ''.join([random.choice(string.digits) for i in range(4)])
             obj.save()
