@@ -80,13 +80,11 @@ class RequestAddView(CreateView):
                 else:
                     # Customerを入力のものと置き換える
                     print('このデータは全件一致しませんでした')
-
-                # ここからCustomerをRequestに保持させる
             
+            # 一致しなかったときにustomerをRequestに保持させる
             if(hit == 0):
                 customer = Customer
                 # カスタマーの追加とそれを引数に渡す
-                
                 print('customer')
                 obj2.save()
                 print('customer save')
@@ -95,6 +93,11 @@ class RequestAddView(CreateView):
             obj1.email = obj2
             obj1.request_datetime = timezone.localtime()
             obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
+            
+            # 時間の判定
+            # 承認済みの時間にかぶせて申請が入った場合のみ削除
+            # 過去の日時の申請もきっとはじいた方がいいかも？
+            
             obj1.save()
 
             print('save')
