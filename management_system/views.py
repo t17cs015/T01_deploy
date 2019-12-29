@@ -43,14 +43,10 @@ class RequestAddView(CreateView):
         print(args)
         print('kwargs')
         print(kwargs)
-        # context_object_name = 'sample_create'
 
         form1 = self.form_class(request.POST)
         form2 = self.second_form_class(request.POST)
-        # name = self.request.POST.get('name')
-        # email = self.request.POST.get('email')
-        # organization_name = self.request.POST.get('organization_name')
-        # tell_number = self.request.POST.get('tell_number')
+
         print('form1')
         print(form1)
         print('form2')
@@ -62,8 +58,6 @@ class RequestAddView(CreateView):
             # emailに該当するものをすべて取得
             customers = list(Customer.objects.filter(email=obj2.email))
             
-
-
             if(len(customers)==0):
                 print('一致するメアドがlistに存在しない')
             else:
@@ -73,20 +67,19 @@ class RequestAddView(CreateView):
             print('customers')
             print(customers)
 
-            # listの判別から
-
+            # listの判別
             hit = 0
 
             for cus in customers:
                 print(cus.tell_number)
                 if(cus.name == obj2.name and cus.organization_name == obj2.organization_name and cus.tell_number == obj2.tell_number):
                     # そのままcustomerを使う
-                    print('true')
+                    print('全件一致しました')
                     obj2 = cus
                     hit = 1
                 else:
                     # Customerを入力のものと置き換える
-                    print('false')
+                    print('このデータは全件一致しませんでした')
 
                 # ここからCustomerをRequestに保持させる
             
@@ -95,11 +88,8 @@ class RequestAddView(CreateView):
                 # カスタマーの追加とそれを引数に渡す
                 
                 print('customer')
-                # print(customer)
                 obj2.save()
                 print('customer save')
-
-                
                 print('dainyuu')
             
             obj1.email = obj2
