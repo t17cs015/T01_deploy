@@ -25,6 +25,7 @@ class RequestAddView(CreateView):
     template_name = 'management_system/request_add.html'
     success_url = '/management_system'
     form_class = RequestForm
+    second_form_class = CustomerForm
 
     def get_context_data(self,**kwargs):
         context = super(CreateView, self).get_context_data(**kwargs)
@@ -43,59 +44,82 @@ class RequestAddView(CreateView):
         print('kwargs')
         print(kwargs)
         # context_object_name = 'sample_create'
-        form = self.form_class(request.POST)
-        name = self.request.POST.get('name')
-        email = self.request.POST.get('email')
-        organization_name = self.request.POST.get('organization_name')
-        tell_number = self.request.POST.get('tell_number')
-        print('form')
-        print(form)
 
-        if form.is_valid():
-            obj = form.save(commit=False)
+        form1 = self.form_class(request.POST)
+        form2 = self.second_form_class(request.POST)
+        # name = self.request.POST.get('name')
+        # email = self.request.POST.get('email')
+        # organization_name = self.request.POST.get('organization_name')
+        # tell_number = self.request.POST.get('tell_number')
+        print('form1')
+        print(form1)
+        print('form2')
+        print(form2)
+
+        if form1.is_valid():
+            obj1 = form1.save(commit=False)
+            obj2 = form2.save(commit=False)
             # emailに該当するものをすべて取得
-            customers = Customer.objects.filter(pk=email)
+            customers = list(Customer.objects.filter(email=obj2.email))
+            
 
-            if(customers.first() == None):
-                print('なかったよ')
+
+            if(len(customers)==0):
+                print('一致するメアドがlistに存在しない')
             else:
-                print('あったよ')
+                print('一致するメアドがlistに存在する')
             print('request')
             print(request)
             print('customers')
             print(customers)
 
-# queryset の解決から
+            # listの判別から
 
+            hit = 0
 
+            for cus in customers:
+                print(cus.tell_number)
+                if(cus.name == obj2.name and cus.organization_name == obj2.organization_name and cus.tell_number == obj2.tell_number):
+                    # そのままcustomerを使う
+                    print('true')
+                    obj2 = cus
+                    hit = 1
+                else:
+                    # Customerを入力のものと置き換える
+                    print('false')
 
-            print(customers.tell_number)
-            if(customer.name == name and customer.organization_name == organization_name and customer.tell_number == tell_number):
-                # そのままcustomerを使う
-                print('true')
-            else:
-                # Customerを入力のものと置き換える
-                print('false')
+                # ここからCustomerをRequestに保持させる
+            
+            if(hit == 0):
+                customer = Customer
+                # カスタマーの追加とそれを引数に渡す
+                
+                print('customer')
+                # print(customer)
+                obj2.save()
+                print('customer save')
 
-            # ここからCustomerをRequestに保持させる
-            obj.email = customer
-
-
-            obj.request_datetime = timezone.localtime()
-            obj.password = ''.join([random.choice(string.digits) for i in range(4)])
-            obj.save()
+                
+                print('dainyuu')
+            
+            obj1.email = obj2
+            obj1.request_datetime = timezone.localtime()
+            obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
+            obj1.save()
 
             print('save')
-            obj.request_id = obj.id
+            obj1.request_id = obj1.id
             print('dainyuu')
-            obj.save()
+            obj1.save()
             
-            print(obj.id)
-            print(obj.request_id)
+            print('obj1.id')
+            print(obj1.id)
+            print('obj2.id')
+            print(obj2.id)
             print('Ill send')
-            return self.form_valid(form,obj)
+            return self.form_valid(form1,obj1)
         else:
-            return self.form_invalid(form)
+            return self.form_invalid(form1)
 
     def form_valid(self, form,obj):
         # messages.success(self.request, '保存しました')

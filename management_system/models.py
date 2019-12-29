@@ -7,7 +7,7 @@ from django.core.validators import RegexValidator
 
 
 class Customer(models.Model):
-    email = models.EmailField(primary_key=True)
+    email = models.EmailField()
     name = models.CharField(max_length=60)
     organization_name = models.CharField(max_length=60)
     tell_number_validator = RegexValidator(regex=r'^(\+([0-9]){1,4}-[1-9]([0-9]){1,3}|0([0-9]){1,3})-([0-9]){1,4}-([0-9]){1,4}$', message=("半角数字とハイフンを用いて電話番号を入力してください"))
