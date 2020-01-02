@@ -9,7 +9,6 @@ import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from . import views
-from extra_views import CreateWithInlinesView , InlineFormSet
 from django.views.generic.edit import CreateView , UpdateView
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm
 from .forms import CustomerForm
