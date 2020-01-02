@@ -105,7 +105,11 @@ class RequestAddView(CreateView):
             print(requests)
             requests += list(filter(lambda x:True if(obj1.scheduled_exit_datetime > x.scheduled_entry_datetime and obj1.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
             print(requests)
-
+            if(len(requests) != 0):
+                for req in requests:
+                    if(req.approval == 1):
+                        print('すでに申請されている時間帯なのでこの時間は申請できません')
+                        print(req)
 
 
             
