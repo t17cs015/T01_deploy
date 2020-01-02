@@ -91,7 +91,6 @@ class RequestAddView(CreateView):
             obj1.request_datetime = timezone.localtime()
             obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
             
-
             # 時間の判定
             # 承認済みの時間にかぶせて申請が入った場合のみ削除
             # 過去の日時の申請もきっとはじいた方がいいかも？
@@ -108,7 +107,7 @@ class RequestAddView(CreateView):
                     if(req.approval == 1):
                         print('すでに申請されている時間帯なのでこの時間は申請できません')
                         print(req)
-
+                        return HttpResponseRedirect(reverse('add'))
             obj1.save()
 
             print('save')
