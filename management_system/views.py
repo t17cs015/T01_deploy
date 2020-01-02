@@ -86,13 +86,11 @@ class RequestAddView(CreateView):
                 # カスタマーの追加とそれを引数に渡す
                 obj2.save()
                 print('customer save')
-                print('dainyuu')
             
             obj1.email = obj2
             obj1.request_datetime = timezone.localtime()
             obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
             
-            print('今から判定')
 
             # 時間の判定
             # 承認済みの時間にかぶせて申請が入った場合のみ削除
@@ -111,8 +109,6 @@ class RequestAddView(CreateView):
                         print('すでに申請されている時間帯なのでこの時間は申請できません')
                         print(req)
 
-
-            
             obj1.save()
 
             print('save')
@@ -139,7 +135,7 @@ class RequestAddView(CreateView):
         recipient_list = [
             obj.email.__str__()
         ]
-        # print('send mail')
+        print('send mail')
         send_mail(subject,massage,from_email,recipient_list)
 
         return super().form_valid(form)
