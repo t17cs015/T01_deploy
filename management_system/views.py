@@ -84,7 +84,6 @@ class RequestAddView(CreateView):
             if(hit == 0):
                 customer = Customer
                 # カスタマーの追加とそれを引数に渡す
-                print('customer')
                 obj2.save()
                 print('customer save')
                 print('dainyuu')
@@ -93,9 +92,22 @@ class RequestAddView(CreateView):
             obj1.request_datetime = timezone.localtime()
             obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
             
+            print('今から判定')
+
             # 時間の判定
             # 承認済みの時間にかぶせて申請が入った場合のみ削除
             # 過去の日時の申請もきっとはじいた方がいいかも？
+
+            # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
+            # 及び退館時間も同様
+            # 以上の二点に該当するものをfilterで持ってくる
+            requests = list(filter(lambda x:True if(obj1.scheduled_entry_datetime >= x.scheduled_entry_datetime and obj1.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            print(requests)
+            requests += list(filter(lambda x:True if(obj1.scheduled_exit_datetime > x.scheduled_entry_datetime and obj1.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            print(requests)
+
+
+
             
             obj1.save()
 
