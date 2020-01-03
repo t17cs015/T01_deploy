@@ -108,9 +108,6 @@ class RequestAddView(CreateView):
                         print('すでに申請されている時間帯なのでこの時間は申請できません')
                         print(req)
                         messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
-
-
-
                         return HttpResponseRedirect(reverse('add'))
             obj1.save()
 
