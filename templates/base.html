@@ -16,12 +16,13 @@
     <div class="notification is-info">
         <!-- <button class="delete" type="button"></button> -->
         {% for message in messages %}
-        <p> {{ message }}</p>
+		<div class="ui red inverted segment"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+			{{ message }}
+		</font></font></div>
         {% endfor %}
     </div>
 </div>
 {% endif %}
-
 
 <body>
 	<div class="countainer">
@@ -44,7 +45,6 @@
 		</div>
 		<div class="twelve wide stretched column">
 			{% block main %}{% endblock %}
-			
 		</div>
 	</div>
 </body>
