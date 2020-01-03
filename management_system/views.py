@@ -107,6 +107,10 @@ class RequestAddView(CreateView):
                     if(req.approval == 1):
                         print('すでに申請されている時間帯なのでこの時間は申請できません')
                         print(req)
+                        messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+
+
+
                         return HttpResponseRedirect(reverse('add'))
             obj1.save()
 
@@ -125,7 +129,6 @@ class RequestAddView(CreateView):
             return self.form_invalid(form1)
 
     def form_valid(self, form,obj):
-        # messages.success(self.request, '保存しました')
         print('保存しました')
 
         subject = 'W DC Center'
@@ -136,6 +139,7 @@ class RequestAddView(CreateView):
         ]
         print('send mail')
         send_mail(subject,massage,from_email,recipient_list)
+        messages.success(self.request, '申請を受理しました')
 
         return super().form_valid(form)
     
