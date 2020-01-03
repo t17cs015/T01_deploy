@@ -6,8 +6,16 @@
  <form action="{% url 'add' %}" method="post">
  {% csrf_token %}
  <table>
-{{form_Customer.as_table}}
-{{form_Request.as_table}}
+<!-- {{form_Customer.as_table}}
+{{form_Request.as_table}} -->
+Eメール<input name='email'><br>
+名前<input name='name'><br>
+企業名<input name='organization_name'><br>
+電話番号<input name='tell_number'><br>
+入館時間<input name='scheduled_entry_datetime'><br>
+退館時間<input name='scheduled_exit_datetime'><br>
+申請理由<input name='purpose_admission'><br>
+
 </table>
  <input type="submit"/>
  </form>

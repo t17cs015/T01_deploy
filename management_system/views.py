@@ -45,6 +45,20 @@ class RequestAddView(CreateView):
 
         form1 = self.form_class(request.POST)
         form2 = self.second_form_class(request.POST)
+        
+        form2.email = request.POST.get('email')
+        form2.name = request.POST.get('name')
+        form2.organization_name = request.POST.get('organization_name')
+        form2.tell_number = request.POST.get('tell_number')
+        form1.scheduled_entry_datetime = request.POST.get('scheduled_entry_datetime')
+        form1.scheduled_exit_datetime = request.POST.get('scheduled_exit_datetime')
+        form1.purpose_admission = request.POST.get('purpose_admission')
+
+        print('POST')
+        print(request.POST)
+        print('GET')
+        print(request.GET)
+
 
         print('form1')
         print(form1)
