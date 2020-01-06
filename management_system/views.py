@@ -1,4 +1,4 @@
-from django.contrib import messages  # メッセージフレームワーク
+from django.contrib import messages
 from django.core.mail import BadHeaderError , send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect , get_object_or_404 , render
@@ -43,31 +43,53 @@ class RequestAddView(CreateView):
         print('kwargs')
         print(kwargs)
 
-        form1 = self.form_class(request.POST)
-        form2 = self.second_form_class(request.POST)
-        
-        form2.email = request.POST.get('email')
-        form2.name = request.POST.get('name')
-        form2.organization_name = request.POST.get('organization_name')
-        form2.tell_number = request.POST.get('tell_number')
-        form1.scheduled_entry_datetime = request.POST.get('scheduled_entry_datetime')
-        form1.scheduled_exit_datetime = request.POST.get('scheduled_exit_datetime')
-        form1.purpose_admission = request.POST.get('purpose_admission')
-
         print('POST')
         print(request.POST)
         print('GET')
         print(request.GET)
-
-
+        
+        form1 = self.form_class(request.POST)
+        form2 = self.second_form_class(request.POST)
+        
         print('form1')
         print(form1)
         print('form2')
         print(form2)
 
+        print(request.POST.get('scheduled_entry_datetime')) 
+        print(type(request.POST.get('scheduled_entry_datetime')))
+
+        # entry = timezone.datetime.strptime(request.POST.get('scheduled_entry_datetime1'),'%Y-%m-%dT%H:%M')
+        # exit = timezone.datetime.strptime(request.POST.get('scheduled_exit_datetime'),'%Y-%m-%dT%H:%M')
+
+        # form2.email = request.POST.get('email')
+        # form2.name = request.POST.get('name')
+        # form2.organization_name = request.POST.get('organization_name')
+        # form2.tell_number = request.POST.get('tell_number')
+        # form1.scheduled_entry_datetime = timezone.datetime.strptime(request.POST.get('scheduled_entry_datetime'),'%Y-%m-%dT%H:%M')
+        # form1.scheduled_exit_datetime = exit
+        # form1.purpose_admission = request.POST.get('purpose_admission')
+
+        # print(type(form1.scheduled_exit_datetime))
+        # print(form1.scheduled_exit_datetime)
+
+        # print('form1')
+        # print(form1)
+        # print('form2')
+        # print(form2)
+        entrys = request.POST.get('scheduled_entry_datetime')
+        exits = request.POST.get('scheduled_exit_datetime')
+        # print(type(timezone.datetime.strptime(request.POST.get('scheduled_entry_datetime1'),'%Y-%m-%dT%H:%M')))
+
         if form1.is_valid():
             obj1 = form1.save(commit=False)
             obj2 = form2.save(commit=False)
+            entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
+            exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
+
+            obj1.scheduled_entry_datetime = datetime.datetime(entryt.year,entryt.mounth,entryt.day,entryt.hour,entryt.minute,00)
+            obj1.scheduled_exit_datetime = timezone.datetime.strptime(exitt,'%Y-%m-%dT%H:%M')
+
             # emailに該当するものをすべて取得
             customers = list(Customer.objects.filter(email=obj2.email))
             
@@ -104,6 +126,8 @@ class RequestAddView(CreateView):
             obj1.email = obj2
             obj1.request_datetime = timezone.localtime()
             obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
+            print(obj1.scheduled_entry_datetime)
+            print(obj2)
             
             # 時間の判定
             # 承認済みの時間にかぶせて申請が入った場合のみ削除

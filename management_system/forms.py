@@ -12,7 +12,8 @@ class RequestIdForm(forms.Form):
 class RequestForm(forms.ModelForm):
     class Meta:
         model = Request
-        fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime', 'purpose_admission']
+        fields = ['purpose_admission']
+        # 'scheduled_entry_datetime', 'scheduled_exit_datetime', 
 
 class RequestPasswordForm(forms.ModelForm):
     class Meta:
