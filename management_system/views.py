@@ -87,8 +87,11 @@ class RequestAddView(CreateView):
             entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
             exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
 
-            obj1.scheduled_entry_datetime = datetime.datetime(entryt.year,entryt.mounth,entryt.day,entryt.hour,entryt.minute,00)
-            obj1.scheduled_exit_datetime = timezone.datetime.strptime(exitt,'%Y-%m-%dT%H:%M')
+            jp = pytz.timezone('Asia/Tokyo')
+            print(jp.localize(exitt))
+
+            obj1.scheduled_entry_datetime = jp.localize(entryt)
+            obj1.scheduled_exit_datetime = jp.localize(exitt)
 
             # emailに該当するものをすべて取得
             customers = list(Customer.objects.filter(email=obj2.email))
