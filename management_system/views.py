@@ -93,6 +93,10 @@ class RequestAddView(CreateView):
             obj1.scheduled_entry_datetime = jp.localize(entryt)
             obj1.scheduled_exit_datetime = jp.localize(exitt)
 
+            if obj1.scheduled_entry_datetime >= obj1.scheduled_exit_datetime:
+                messages.success(self.request, '入力時間が正しくありません')
+                return HttpResponseRedirect(reverse('add'))
+
             # emailに該当するものをすべて取得
             customers = list(Customer.objects.filter(email=obj2.email))
             
