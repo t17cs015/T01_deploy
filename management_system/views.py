@@ -173,7 +173,87 @@ class RequestAddView(CreateView):
         messages.success(self.request, '申請を受理しました')
 
         return super().form_valid(form)
-    
+
+# 入館申請画面 (UC-01)
+class RequestAddCheckView(TemplateView):
+    model = Request
+    template_name = 'management_system/request_add_check.html'
+    success_url = ''
+
+    def post(self, request, *args, **kwargs):
+        print('entry')
+        print('self')
+        print(self)
+        print('request')
+        print(request)
+        print('args')
+        print(args)
+        print('kwargs')
+        print(kwargs)
+
+        request = get_object_or_404(Request,pk=kwargs.get('pk'))
+        if(request.entry_datetime==None):
+            request.entry_datetime = timezone.localtime()
+        elif(request.exit_datetime==None):
+            request.exit_datetime = timezone.localtime()
+        else:
+            print('already logined')
+            return HttpResponseRedirect(reverse(''))
+        request.save()
+        print (request)
+        
+        #         request_id = self.request.POST.get('request_id')
+        # request = get_object_or_404(Request, pk=request_id)
+        # request.entry_datetime = timezone.localtime()
+
+        # request_id = self.request.POST.get('request_id')
+        # scheduled_entry_datetime = self.request.POST.get('scheduled_entry_datetime')
+        # scheduled_exit_datetime = self.request.POST.get('scheduled_exit_datetime')
+        # entry_datetime = self.request.POST.get('entry_datetime')
+
+        # request = get_object_or_404(Request, pk=request_id)
+        # request.scheduled_entry_datetime = scheduled_entry_datetime
+        # request.scheduled_exit_datetime = scheduled_exit_datetime
+        # request.entry_datetime = entry_datetime
+        # request.save()
+        return HttpResponseRedirect(reverse('login'))
+
+    def get_context_data(self, **kwarg):
+        context = super().get_context_data(**kwarg)
+        print('getRequest')
+
+        if( kwarg.get('pk') == None ):
+            print('get false')
+            # context['form_id'] = RequestIdForm()
+            # context['form'] = RequestForm()
+            
+        else:  
+            print('getSucsess')
+            request = get_object_or_404(Request,pk=kwarg.get('pk'))
+            customer = get_object_or_404(Customer,pk=request.email.id)
+            context['form_id'] = {'request_id':kwarg.get('pk')}
+            context['form_request'] = request
+            context['form_customer'] = customer
+            if(request.entry_datetime == None):
+                context['form_message'] = '入館'
+            elif(request.exit_datetime==None):
+                context['form_message'] = '退館'
+            else:
+                print('already logined')
+
+        return context
+
+    def entry(self, **kwargs):
+        print('hello')
+        request_id = self.request.POST.get('request_id')
+        request = get_object_or_404(Request, pk=request_id)
+        request.entry_datetime = timezone.localtime()
+        request.save()
+
+        return request_id
+        # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
+
+   
 
 # 実績入力画面 (UC-02)
 class RequestLoginView(TemplateView):
@@ -282,5 +362,3 @@ class RequestPerformanceView(TemplateView):
         return request_id
         # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
 
-    def exit(self, **kwargs):
-        return
