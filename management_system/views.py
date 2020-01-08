@@ -59,27 +59,8 @@ class RequestAddView(CreateView):
         print(request.POST.get('scheduled_entry_datetime')) 
         print(type(request.POST.get('scheduled_entry_datetime')))
 
-        # entry = timezone.datetime.strptime(request.POST.get('scheduled_entry_datetime1'),'%Y-%m-%dT%H:%M')
-        # exit = timezone.datetime.strptime(request.POST.get('scheduled_exit_datetime'),'%Y-%m-%dT%H:%M')
-
-        # form2.email = request.POST.get('email')
-        # form2.name = request.POST.get('name')
-        # form2.organization_name = request.POST.get('organization_name')
-        # form2.tell_number = request.POST.get('tell_number')
-        # form1.scheduled_entry_datetime = timezone.datetime.strptime(request.POST.get('scheduled_entry_datetime'),'%Y-%m-%dT%H:%M')
-        # form1.scheduled_exit_datetime = exit
-        # form1.purpose_admission = request.POST.get('purpose_admission')
-
-        # print(type(form1.scheduled_exit_datetime))
-        # print(form1.scheduled_exit_datetime)
-
-        # print('form1')
-        # print(form1)
-        # print('form2')
-        # print(form2)
         entrys = request.POST.get('scheduled_entry_datetime')
         exits = request.POST.get('scheduled_exit_datetime')
-        # print(type(timezone.datetime.strptime(request.POST.get('scheduled_entry_datetime1'),'%Y-%m-%dT%H:%M')))
 
         if form1.is_valid():
             obj1 = form1.save(commit=False)
@@ -143,7 +124,7 @@ class RequestAddView(CreateView):
             obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
             print(obj1.scheduled_entry_datetime)
             print(obj2)
-            
+
             # 時間の判定
             # 承認済みの時間にかぶせて申請が入った場合のみ削除
             # 過去の日時の申請もきっとはじいた方がいいかも？
@@ -182,7 +163,6 @@ class RequestAddView(CreateView):
         print('保存しました')
 
         subject = ' W社DC利用申請受領のお知らせ'
-        # massage = obj.email.name+'さん\n\nW社です\n\nDBセンター利用ご予約を受け取りましたので報告いたします\n\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : '+obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n電話番号 : ' + obj.email.tell_number + '\n\n管理者が確認後、再度、メールを送信します\n本メールは自動送信により内容の確認を行うものであって、予約を保証するものではありません\n申請が取り消される場合がございます'
         massage = obj.email.organization_name+' '+ obj.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用申請を受け付け致しました。\n申請の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + obj.email.name + '様の申請番号を以下に記載いたします。\n\n申請番号 : ' + str(obj.request_id) + '\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://example.com/3020\n\n------------------------------\n署名\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
         from_email = 'dbcenterw1@gmail.com'
         recipient_list = [
