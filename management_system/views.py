@@ -93,6 +93,8 @@ class RequestAddView(CreateView):
             obj1.scheduled_entry_datetime = jp.localize(entryt)
             obj1.scheduled_exit_datetime = jp.localize(exitt)
 
+
+            # 入館時間よりも退館時間の方が前の時、申請を受け付けない
             if obj1.scheduled_entry_datetime >= obj1.scheduled_exit_datetime:
                 messages.success(self.request, '入力時間が正しくありません')
                 return HttpResponseRedirect(reverse('add'))
@@ -132,6 +134,12 @@ class RequestAddView(CreateView):
             
             obj1.email = obj2
             obj1.request_datetime = timezone.localtime()
+
+            # 入館時間が現在時刻よりも前の場合は申請を受け付けない
+            if obj1.scheduled_entry_datetime < obj1.request_datetime:
+                messages.success(self.request, '過去の時間に入館申請はできません')
+                return HttpResponseRedirect(reverse('add'))
+
             obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
             print(obj1.scheduled_entry_datetime)
             print(obj2)
