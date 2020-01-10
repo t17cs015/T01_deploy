@@ -21,7 +21,8 @@
     <thead>
         <tr>
             <th>申請日時</th>
-            <th>組織名 and 氏名</th>
+            <th>組織名</th>
+            <th>氏名</th>
             <th>入館予定日時</th>
             <th>入館実績日時</th>
             <th>退館予定日時</th>
@@ -32,7 +33,8 @@
     {% for request in object_list %}
         <tr>
             <td scope = "row"> {{ request.request_datetime }}</td>
-            <td>{{ request.email }}</td>
+            <td>{{ request.email.name }}</td>
+            <td>{{ request.email.organization_name }}</td>
             <td>{{ request.scheduled_entry_datetime }}</td>
             <td>{% if request.entry_datetime == None %} -- {% endif %}
                 {% if request.entry_datetime != None %} {{ request.entry_datetime}} {% endif %}</td>
