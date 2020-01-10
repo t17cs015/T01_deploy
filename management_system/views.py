@@ -182,6 +182,12 @@ class RequestLoginView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         request_id = self.request.POST.get('request_id')
+        requests = list(Request.objects.filter(id=request_id))
+        if len(requests) == 0:
+            print('login fail')
+            messages.success(self.request, 'idとパスワードが一致しません')
+            return HttpResponseRedirect(reverse('login'))
+
         request = get_object_or_404(Request, pk=request_id)
         print('入力されたpas : ' + self.request.POST.get('password'))
         print('本来のpas : ' + str(request.password))
