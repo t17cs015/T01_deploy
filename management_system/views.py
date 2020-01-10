@@ -184,7 +184,7 @@ class RequestLoginView(TemplateView):
         request_id = self.request.POST.get('request_id')
         requests = list(Request.objects.filter(id=request_id))
         if len(requests) == 0:
-            print('login fail')
+            print('このidは存在しません')
             messages.success(self.request, 'idとパスワードが一致しません')
             return HttpResponseRedirect(reverse('login'))
 
@@ -194,18 +194,20 @@ class RequestLoginView(TemplateView):
         print('入館時間 : ' + str(request.entry_datetime))
         print('退館時間 : ' + str(request.exit_datetime))
         
-        if(request.entry_datetime!=None and request.exit_datetime!=None):
-            print('この申請は既に退館済みです')
-            messages.success(self.request, 'この申請は既に退館済みです')
-            return HttpResponseRedirect(reverse('login'))
-        elif(int(self.request.POST.get('password')) == request.password ):
-            print('login sucsess')
-            print('loginId:' + request_id)
-            return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-        else:
+        if(int(self.request.POST.get('password')) != request.password ):
             print('login fail')
             messages.success(self.request, 'idとパスワードが一致しません')
             return HttpResponseRedirect(reverse('login'))
+
+        elif(request.entry_datetime!=None and request.exit_datetime!=None):
+            print('この申請は既に退館済みです')
+            messages.success(self.request, 'この申請は既に退館済みです')
+            return HttpResponseRedirect(reverse('login'))
+        
+        else:
+            print('login sucsess')
+            print('loginId:' + request_id)
+            return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
         
     def get_context_data(self, **kwarg):
         print('make forms')
