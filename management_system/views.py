@@ -122,20 +122,6 @@ class RequestPerformanceView(TemplateView):
         request.save()
         print (request)
         
-        #         request_id = self.request.POST.get("request_id")
-        # request = get_object_or_404(Request, pk=request_id)
-        # request.entry_datetime = timezone.localtime()
-
-        # request_id = self.request.POST.get('request_id')
-        # scheduled_entry_datetime = self.request.POST.get('scheduled_entry_datetime')
-        # scheduled_exit_datetime = self.request.POST.get('scheduled_exit_datetime')
-        # entry_datetime = self.request.POST.get('entry_datetime')
-
-        # request = get_object_or_404(Request, pk=request_id)
-        # request.scheduled_entry_datetime = scheduled_entry_datetime
-        # request.scheduled_exit_datetime = scheduled_exit_datetime
-        # request.entry_datetime = entry_datetime
-        # request.save()
         return HttpResponseRedirect(reverse('main'))
 
     def get_context_data(self, **kwarg):
@@ -144,38 +130,18 @@ class RequestPerformanceView(TemplateView):
 
         if( kwarg.get('pk') == None ):
             print('get false')
-            # context['form_id'] = RequestIdForm()
-            # context['form'] = RequestForm()
+            return HttpResponseRedirect(reverse('login'))
             
         else:  
             print('getSucsess')
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
             customer = get_object_or_404(Customer,pk=request.request_id)
-            # context= self.get_context_data(request=request,customer = customer)
+            
             context['form_id'] = {'request_id':kwarg.get('pk')}
 
             context['form_request'] = request
-            # RequestGetForm(initial={
-            #     'email':request.email,
-            #     'scheduled_entry_datetime':request.scheduled_entry_datetime,
-            #     'scheduled_exit_datetime':request.scheduled_exit_datetime,
-            #     'request.entry_datetime':request.entry_datetime,
-            #     })
-            context['form_customer'] = customer
-            # CustomerForm(initial={
-            #     'organization_name':customer.organization_name,
 
-            # })
+            context['form_customer'] = customer
+
         return context
 
-    # def entry(self, **kwargs):
-    #     request_id = self.request.POST.get("request_id")
-    #     request = get_object_or_404(Request, pk=request_id)
-    #     request.entry_datetime = timezone.localtime()
-    #     request.save()
-
-    #     return request_id
-    #     # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-
-    # def exit(self, **kwargs):
-    #     return
