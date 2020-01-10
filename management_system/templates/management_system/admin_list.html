@@ -5,10 +5,17 @@
 <form method="get" action="" name="filter_form">
     <legend>test</legend>
     <div>
-        <span>留年</span>
-        <input type="search" id="filter_name" name="name" placeholder="組織名">
-        <button id="filter">あぼりじに</button>
+        <span>アカハラ</span>
+        <select name="order">
+            <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>おり</option>
+            <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>のぼ</option>
+        </select>
     </div>
+    <div>
+        <span>サレジオ</span>
+        <input type="search" id="filter_name" name="name" placeholder="組織名">
+    </div>
+    <button id="filter">y野j一</button>
 </form>
 <table>
     <thead>

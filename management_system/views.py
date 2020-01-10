@@ -176,18 +176,34 @@ class RequestListView(LoginRequiredMixin, ListView):
     model = Request
     login_url = 'admin_login'
     template_name = 'management_system/admin_list.html'
+    ascending_order = False
 
     def get_context_data(self, **kwargs):
         context = super(RequestListView, self).get_context_data(**kwargs)
+
+        #if ascending_order:
+            #context["ascending_order"] = "true"
+        context["ascending_order"] = "true" if self.ascending_order == True else "false"
+        print(self.ascending_order)
+        #context["ascending_order"] = "true"
+
         return context
 
     def get_queryset(self):
         results = self.model.objects.all()
 
         q_name = self.request.GET.get('name')
+        q_order = self.request.GET.get('order')
 
         if q_name is not None:
             results = results.filter(email__organization_name__contains=q_name)
+
+        if q_order == "desce":
+            self.ascending_order = False
+            results = results.order_by("request_datetime").reverse()
+        elif q_order == "asce":
+            self.ascending_order = True
+            results = results.order_by("request_datetime")
 
         return results
 
