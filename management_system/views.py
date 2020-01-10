@@ -177,4 +177,8 @@ class RequestListView(LoginRequiredMixin, ListView):
     login_url = 'admin_login'
     template_name = 'management_system/admin_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(RequestListView, self).get_context_data(**kwargs)
+        return context
+
 
