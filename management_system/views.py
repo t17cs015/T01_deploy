@@ -181,4 +181,14 @@ class RequestListView(LoginRequiredMixin, ListView):
         context = super(RequestListView, self).get_context_data(**kwargs)
         return context
 
+    def get_queryset(self):
+        results = self.model.objects.all()
+
+        q_name = self.request.GET.get('name')
+
+        if q_name is not None:
+            results = results.filter(email__organization_name__contains=q_name)
+
+        return results
+
 
