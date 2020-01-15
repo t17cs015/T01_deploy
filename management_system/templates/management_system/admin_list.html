@@ -17,6 +17,11 @@
     </div>
     <button id="filter">y野j一</button>
 </form>
+<style type="text/css">
+<!--
+a { display:block; width:100%; height:100%; }
+-->
+</style>
 <table>
     <thead>
         <tr>
@@ -32,15 +37,17 @@
     <tbody>
     {% for request in object_list %}
         <tr>
-            <td scope = "row"> {{ request.request_datetime }}</td>
-            <td>{{ request.email.name }}</td>
-            <td>{{ request.email.organization_name }}</td>
-            <td>{{ request.scheduled_entry_datetime }}</td>
-            <td>{% if request.entry_datetime == None %} -- {% endif %}
-                {% if request.entry_datetime != None %} {{ request.entry_datetime}} {% endif %}</td>
-            <td>{{ request.scheduled_exit_datetime }}</td>
-            <td>{% if request.exit_datetime == None %} -- {% endif %}
-                {% if request.exit_datetime != None %} {{ request.exit_datetime}} {% endif %}</td>
+            <td scope = "row"><a href="https://google.com">{{ request.request_datetime }}</a></td>
+            <td><a href="https://google.com">{{ request.email.name }}</a></td>
+            <td><a href="https://google.com">{{ request.email.organization_name }}</a></td>
+            <td><a href="https://google.com">{{ request.scheduled_entry_datetime }}</a></td>
+            <td><a href="https://google.com">{% if request.entry_datetime == None %}--{% endif %}
+                                             {% if request.entry_datetime != None %}{{ request.entry_datetime}}{% endif %}
+                                             </a></td>
+            <td><a href="https://google.com">{{ request.scheduled_exit_datetime }}</a></td>
+            <td><a href="https://google.com">{% if request.exit_datetime == None %}--{% endif %}
+                                             {% if request.exit_datetime != None %}{{ request.exit_datetime}}{% endif %}
+                                             </a></td>
         </tr>
     {% endfor %}
     </tbody>
