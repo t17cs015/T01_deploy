@@ -3,10 +3,11 @@
  {% block title %} Add {% endblock %}
 
  {% block main %}
- <form action="{% url 'add' %}" method="post">
- {% csrf_token %}
  
+ <form method="post" id='send'action="{% url 'add' %}" >
+{% csrf_token %}
  <body>
+
  <div class='countainer'>
    <div class='header'>
      申請情報を入力してください
@@ -55,24 +56,14 @@
     </tr>
   </tbody>
 </table>
-
-<!-- 
-   <div class="ui input">
-     組織名
-    <input type="text" name='organization_name' placeholder="Search...">
-  </div>
-   氏名<input name='name'><br>
-  
-   電話番号<input name='tell_number'><br>
-   メールアドレス<input name='email'><br>
-   入館予定日時<input name='scheduled_entry_datetime'><br>
-   退館予定日時<input name='scheduled_exit_datetime'><br>
-   申請目的
-   <input name='purpose_admission'><br>
-
-  </div> -->
 </body>
- <input type="submit"/>
- </form>
+
+<button class="ui blue button" form = 'send'>送信 </button>
+
+</form>
+</body>
+
+
+
  {% endblock %}
 
