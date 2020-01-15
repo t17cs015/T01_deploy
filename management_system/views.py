@@ -48,17 +48,45 @@ class RequestAddView(CreateView):
         print(request.POST)
         print('GET')
         print(request.GET)
-        context = {
-            'organization_name': request.POST.get('organization_name'),
-            'name': request.POST.get('name'),
-            'tell_number': request.POST.get('tell_number'),
-            'email': request.POST.get('email'),
-            'scheduled_entry_datetime': request.POST.get('scheduled_entry_datetime'),
-            'scheduled_exit_datetime': request.POST.get('scheduled_exit_datetime'),
-            'purpose_admission': request.POST.get('purpose_admission'),
-        }
-        print(context)
         
+        entrys = request.POST.get('scheduled_entry_datetime')
+        exits = request.POST.get('scheduled_exit_datetime')
+
+        entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
+        exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
+
+        jp = pytz.timezone('Asia/Tokyo')
+        print(jp.localize(exitt))
+
+        customer = self.second_form_class(request.POST)
+        req = self.form_class()
+        
+        print(req)
+
+        # req.scheduled_entry_datetime = jp.localize(entryt)
+        # req.scheduled_exit_datetime = jp.localize(exitt)
+
+
+        kwargs = {
+            'form_Request' : req,
+            'form_Customer': customer,
+        }
+        context = kwargs
+        # context['form_Request'] = RequestForm()
+        # context = {
+        #     'organization_name': request.POST.get('organization_name'),
+        #     'name': request.POST.get('name'),
+        #     'tell_number': request.POST.get('tell_number'),
+        #     'email': request.POST.get('email'),
+        #     'scheduled_entry_datetime': request.POST.get('scheduled_entry_datetime'),
+        #     'scheduled_exit_datetime': request.POST.get('scheduled_exit_datetime'),
+        #     'purpose_admission': request.POST.get('purpose_admission'),
+        # }
+        
+        print('contex:')
+        print(context)
+        print(context['form_Request'])
+        print(context['form_Customer'])
         
         return render(request,'management_system/request_add_check.html' ,context)
         # return HttpResponseRedirect(render(context, request))
@@ -100,22 +128,22 @@ class RequestAddCheckView(CreateView):
         print(request.POST.get('scheduled_entry_datetime')) 
         print(type(request.POST.get('scheduled_entry_datetime')))
 
-        entrys = request.POST.get('scheduled_entry_datetime')
-        exits = request.POST.get('scheduled_exit_datetime')
+        # entrys = request.POST.get('scheduled_entry_datetime')
+        # exits = request.POST.get('scheduled_exit_datetime')
 
         # if form1.is_valid():
         # obj1 = form1.save(commit=False)
         obj2 = form2.save(commit=False)
         obj1 = obj2
 
-        entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
-        exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
+        # entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
+        # exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
 
-        jp = pytz.timezone('Asia/Tokyo')
-        print(jp.localize(exitt))
+        # jp = pytz.timezone('Asia/Tokyo')
+        # print(jp.localize(exitt))
 
-        obj1.scheduled_entry_datetime = jp.localize(entryt)
-        obj1.scheduled_exit_datetime = jp.localize(exitt)
+        # obj1.scheduled_entry_datetime = jp.localize(entryt)
+        # obj1.scheduled_exit_datetime = jp.localize(exitt)
         
         # 入館時間よりも退館時間の方が前の時、申請を受け付けない
         if obj1.scheduled_entry_datetime >= obj1.scheduled_exit_datetime:

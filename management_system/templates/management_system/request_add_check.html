@@ -4,51 +4,52 @@
 
  {% block main %}
  <form action="{% url 'addCheck' %}" method="post">
-    {% for field in form %}
-    {{ field.as_hidden }}
-    {% endfor %}
- {% csrf_token %}
- 
- <body>
- <div class='countainer'>
-   <div class='header'>
-     申請情報を入力してください
-   </div>
-   <table class="ui definition table">
-      <tbody>
-        <tr>
-          <td class="two wide column">組織名</td>
-          <td>{{organization_name}}</td>
-        </tr>
-        <tr>
-          <td>名前</td>
-          <td>{{name}} </td>
-        </tr>
-        <tr>
-          <td>電話番号</td>
-          <td>{{tell_number}} </td>
-        </tr>
-        <tr>
-          <td>email</td>
-          <td>{{email}} </td>
-        </tr>
-        <td>入館予定日時</td>
-        <td>{{scheduled_entry_datetime}} </td>
-      </tr>
-      <tr>
-        <td>退館予定日時</td>
-        <td>{{scheduled_exit_datetime}}</td>
-      </tr>
-      <tr>
-        <td>申請理由</td>
-        <td>{{purpose_admission}} </td>
-      </tr>
-      <tr>
-    </tbody>
-    </table>
-  </body>
-
- <input type="submit"/>
- </form>
- {% endblock %}
-
+   <body>
+     <!-- <div class='countainer'> -->
+       <div class='header'>
+         申請情報を入力してください
+        </div>
+        <table class="ui definition table">
+          <tbody>
+            <tr>
+              <td class="two wide column">組織名</td>
+              <td>{{organization_name}}</td>
+            </tr>
+            <tr>
+              <td>名前</td>
+              <td>{{form_Customer.name.value}} </td>
+            </tr>
+            <tr>
+              <td>電話番号</td>
+              <td>{{tell_number}} </td>
+            </tr>
+            <tr>
+              <td>email</td>
+              <td>{{email}} </td>
+            </tr>
+            <td>入館予定日時</td>
+            <td>{{form_Request.scheduled_entry_datetime}} </td>
+          </tr>
+          <tr>
+            <td>退館予定日時</td>
+            <td>{{scheduled_exit_datetime}}</td>
+          </tr>
+          <tr>
+            <td>申請理由</td>
+            <td>{{purpose_admission}} </td>
+          </tr>
+          <tr>
+          </tbody>
+        </table>
+      </body>
+      
+      <input type="submit"/>
+      {% for field in form %}
+      {{ field.as_hidden }}
+      {% endfor %}
+   {% csrf_token %}
+   
+    </form>
+    {% endblock %}
+    
+    
