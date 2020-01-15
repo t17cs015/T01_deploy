@@ -307,7 +307,7 @@ class RequestPerformanceView(TemplateView):
             request.exit_datetime = timezone.localtime()
         else:
             print('already logined')
-            return HttpResponseRedirect(reverse(''))
+            return HttpResponseRedirect(reverse('main'))
         request.save()
         print (request)
         
@@ -361,4 +361,3 @@ class RequestPerformanceView(TemplateView):
 
         return request_id
         # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-
