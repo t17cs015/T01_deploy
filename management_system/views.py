@@ -30,8 +30,13 @@ class RequestAddView(CreateView):
         context = super(CreateView, self).get_context_data(**kwargs)
         context['form_Request'] = RequestForm()
         context['form_Customer'] = CustomerForm()
+        context['page'] = int
         print(context)
         return context
+    
+    def switch(self,**kwargs):
+        print('switch')
+        return 0
 
     def post(self, request, *args, **kwargs):
         print('self')
@@ -262,18 +267,32 @@ class RequestLoginView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         request_id = self.request.POST.get('request_id')
+        requests = list(Request.objects.filter(id=request_id))
+        if len(requests) == 0:
+            print('このidは存在しません')
+            messages.success(self.request, 'idとパスワードが一致しません')
+            return HttpResponseRedirect(reverse('login'))
+
         request = get_object_or_404(Request, pk=request_id)
-        print(self.request.POST.get('password'))
-        print(type(self.request.POST.get('password')))
-        print(request.password)
-        print(type(request.password))
-        if(int(self.request.POST.get('password')) == request.password ):
+        print('入力されたpas : ' + self.request.POST.get('password'))
+        print('本来のpas : ' + str(request.password))
+        print('入館時間 : ' + str(request.entry_datetime))
+        print('退館時間 : ' + str(request.exit_datetime))
+        
+        if(int(self.request.POST.get('password')) != request.password ):
+            print('login fail')
+            messages.success(self.request, 'idとパスワードが一致しません')
+            return HttpResponseRedirect(reverse('login'))
+
+        elif(request.entry_datetime!=None and request.exit_datetime!=None):
+            print('この申請は既に退館済みです')
+            messages.success(self.request, 'この申請は既に退館済みです')
+            return HttpResponseRedirect(reverse('login'))
+        
+        else:
             print('login sucsess')
             print('loginId:' + request_id)
             return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-        else:
-            print('login fail')
-            return HttpResponseRedirect(reverse('login'))
         
     def get_context_data(self, **kwarg):
         print('make forms')
@@ -311,20 +330,7 @@ class RequestPerformanceView(TemplateView):
         request.save()
         print (request)
         
-        #         request_id = self.request.POST.get('request_id')
-        # request = get_object_or_404(Request, pk=request_id)
-        # request.entry_datetime = timezone.localtime()
 
-        # request_id = self.request.POST.get('request_id')
-        # scheduled_entry_datetime = self.request.POST.get('scheduled_entry_datetime')
-        # scheduled_exit_datetime = self.request.POST.get('scheduled_exit_datetime')
-        # entry_datetime = self.request.POST.get('entry_datetime')
-
-        # request = get_object_or_404(Request, pk=request_id)
-        # request.scheduled_entry_datetime = scheduled_entry_datetime
-        # request.scheduled_exit_datetime = scheduled_exit_datetime
-        # request.entry_datetime = entry_datetime
-        # request.save()
         return HttpResponseRedirect(reverse('login'))
 
     def get_context_data(self, **kwarg):
@@ -333,13 +339,15 @@ class RequestPerformanceView(TemplateView):
 
         if( kwarg.get('pk') == None ):
             print('get false')
-            # context['form_id'] = RequestIdForm()
-            # context['form'] = RequestForm()
-            
+            messages.success(self.request, 'idに一致するものが存在しませんでした')
+            return context
         else:  
             print('getSucsess')
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
-            customer = get_object_or_404(Customer,pk=request.email.id)
+            customer = get_object_or_404(Customer,pk=request.request_id)
+            print(request)
+
+            
             context['form_id'] = {'request_id':kwarg.get('pk')}
             context['form_request'] = request
             context['form_customer'] = customer
@@ -352,12 +360,3 @@ class RequestPerformanceView(TemplateView):
 
         return context
 
-    def entry(self, **kwargs):
-        print('hello')
-        request_id = self.request.POST.get('request_id')
-        request = get_object_or_404(Request, pk=request_id)
-        request.entry_datetime = timezone.localtime()
-        request.save()
-
-        return request_id
-        # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
