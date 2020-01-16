@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.core.mail import BadHeaderError , send_mail
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect , QueryDict
 from django.shortcuts import redirect , get_object_or_404 , render
 from django.utils import timezone
 from django.urls import reverse,path
@@ -12,6 +12,7 @@ from . import views
 from django.views.generic.edit import CreateView , UpdateView
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm
 from .forms import CustomerForm
+
 
 from .models import Request , Customer
 
@@ -48,24 +49,35 @@ class RequestAddView(CreateView):
         print(request.POST)
         print('GET')
         print(request.GET)
+
+        print(request.POST.get('scheduled_entry_datetime'))
         
         entrys = request.POST.get('scheduled_entry_datetime')
         exits = request.POST.get('scheduled_exit_datetime')
 
+        print(type(request.POST.get('tell_number')))
+
         entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
         exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
+
+        print(entryt)
 
         jp = pytz.timezone('Asia/Tokyo')
         print(jp.localize(exitt))
 
+        en = str(jp.localize(entryt))
+        ex = str(jp.localize(exitt))
+
+
+        queryd = QueryDict('scheduled_entry_datetime='+en[0:19]+'&scheduled_exit_datetime='+ex[0:19]+'&purpose_admission='+request.POST.get('purpose_admission'),mutable=True)
+        # queryd = QueryDict('purpose_admission=a',mutable=True)
+        print('querydict')
+        print(queryd)
+
         customer = self.second_form_class(request.POST)
-        req = self.form_class()
+        req = self.form_class(queryd)
         
         print(req)
-
-        # req.scheduled_entry_datetime = jp.localize(entryt)
-        # req.scheduled_exit_datetime = jp.localize(exitt)
-
 
         kwargs = {
             'form_Request' : req,
@@ -82,6 +94,7 @@ class RequestAddView(CreateView):
         #     'scheduled_exit_datetime': request.POST.get('scheduled_exit_datetime'),
         #     'purpose_admission': request.POST.get('purpose_admission'),
         # }
+        
         
         print('contex:')
         print(context)
