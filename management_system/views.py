@@ -29,10 +29,11 @@ class RequestAddView(FormView):
 
 
     def form_valid(self,form):
-        # print('baride-syonn')
-        # print(type(form))
+        print('baride-syonn')
+        # print(form)
         # print(form.name)
         # print(form.get('name'))
+        print(form.cleaned_data['name'])
         context = {
             'form' : form
         }
@@ -43,6 +44,7 @@ class RequestAddView(FormView):
     
     def post(self, request, *args, **kwargs):
         print('post')
+
 
 
         return super().post(request, *args, **kwargs)
