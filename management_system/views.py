@@ -9,8 +9,8 @@ import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from . import views
-from django.views.generic.edit import CreateView , UpdateView
-from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm
+from django.views.generic.edit import CreateView , UpdateView , FormView
+from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestSendForm
 from .forms import CustomerForm
 
 
@@ -20,134 +20,153 @@ class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
 
 # 入館申請画面 (UC-01)
-class RequestAddView(CreateView):
+class RequestAddView(FormView):
     model = Request
     template_name = 'management_system/request_add.html'
-    # success_url = '/management_system'
-    form_class = RequestForm
-    second_form_class = CustomerForm
-
-    def get_context_data(self,**kwargs):
-        context = super(CreateView, self).get_context_data(**kwargs)
-        context['form_Request'] = RequestForm()
-        context['form_Customer'] = CustomerForm()
-        print(context)
-        return context
-
-    def post(self, request, *args, **kwargs):
-        print('addCheck viewwww')
-        print('self')
-        print(self)
-        print('request')
-        print(request)
-        print('args')
-        print(args)
-        print('kwargs')
-        print(kwargs)
-
-        print('POST')
-        print(request.POST)
-        print('GET')
-        print(request.GET)
-
-        print(request.POST.get('scheduled_entry_datetime'))
-        
-        entrys = request.POST.get('scheduled_entry_datetime')
-        exits = request.POST.get('scheduled_exit_datetime')
-
-        print(type(request.POST.get('tell_number')))
-
-        entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
-        exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
-
-        print(entryt)
-
-        jp = pytz.timezone('Asia/Tokyo')
-        print(jp.localize(exitt))
-
-        en = str(jp.localize(entryt))
-        ex = str(jp.localize(exitt))
+    success_url = '/management_system'
+    form_class = RequestSendForm
+    # second_form_class = CustomerForm
 
 
-        queryd = QueryDict('scheduled_entry_datetime='+en[0:19]+'&scheduled_exit_datetime='+ex[0:19]+'&purpose_admission='+request.POST.get('purpose_admission'),mutable=True)
-        # queryd = QueryDict('purpose_admission=a',mutable=True)
-        print('querydict')
-        print(queryd)
-
-        customer = self.second_form_class(request.POST)
-        req = self.form_class(queryd)
-        
-        print(req)
-
-        kwargs = {
-            'form_Request' : req,
-            'form_Customer': customer,
+    def form_valid(self,form):
+        # print('baride-syonn')
+        # print(type(form))
+        # print(form.name)
+        # print(form.get('name'))
+        context = {
+            'form' : form
         }
-        context = kwargs
-        # context['form_Request'] = RequestForm()
-        # context = {
-        #     'organization_name': request.POST.get('organization_name'),
-        #     'name': request.POST.get('name'),
-        #     'tell_number': request.POST.get('tell_number'),
-        #     'email': request.POST.get('email'),
-        #     'scheduled_entry_datetime': request.POST.get('scheduled_entry_datetime'),
-        #     'scheduled_exit_datetime': request.POST.get('scheduled_exit_datetime'),
-        #     'purpose_admission': request.POST.get('purpose_admission'),
-        # }
-        
-        
-        print('contex:')
-        print(context)
-        print(context['form_Request'])
-        print(context['form_Customer'])
-        
-        return render(request,'management_system/request_add_check.html' ,context)
-        # return HttpResponseRedirect(render(context, request))
+
+        return render(self.request,'management_system/request_add_check.html' ,context)
+        # return super().form_valid(form)
+
     
+    def post(self, request, *args, **kwargs):
+        print('post')
 
 
+        return super().post(request, *args, **kwargs)
+
+    # def get_context_data(self,**kwargs):
+    #     context = super(FormView, self).get_context_data(**kwargs)
+    #     print(context)
+    #     context['form_Request'] = RequestForm()
+    #     context['form_Customer'] = CustomerForm()
+    #     print(context)
+    #     return context
+
+    # def post(self, request, *args, **kwargs):
+    #     print('addCheck viewwww')
+    #     print('self')
+    #     print(self)
+    #     print('request')
+    #     print(request)
+    #     print('args')
+    #     print(args)
+    #     print('kwargs')
+    #     print(kwargs)
+
+    #     print('POST')
+    #     print(request.POST)
+    #     print('GET')
+    #     print(request.GET)
+
+    #     print(request.POST.get('scheduled_entry_datetime'))
+        
+    #     entrys = request.POST.get('scheduled_entry_datetime')
+    #     exits = request.POST.get('scheduled_exit_datetime')
+
+    #     print(type(request.POST.get('tell_number')))
+
+    #     entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
+    #     exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
+
+    #     print(entryt)
+
+    #     jp = pytz.timezone('Asia/Tokyo')
+    #     print(jp.localize(exitt))
+
+    #     en = str(jp.localize(entryt))
+    #     ex = str(jp.localize(exitt))
+
+
+    #     queryd = QueryDict('scheduled_entry_datetime='+en[0:19]+'&scheduled_exit_datetime='+ex[0:19]+'&purpose_admission='+request.POST.get('purpose_admission'),mutable=True)
+    #     # queryd = QueryDict('purpose_admission=a',mutable=True)
+    #     print('querydict')
+    #     print(queryd)
+
+    #     customer = self.second_form_class(request.POST)
+    #     req = self.form_class(queryd)
+        
+    #     print(req)
+
+    #     kwargs = {
+    #         'form_Request' : req,
+    #         'form_Customer': customer,
+    #     }
+    #     context = kwargs
+    #     # context['form_Request'] = RequestForm()
+    #     # context = {
+    #     #     'organization_name': request.POST.get('organization_name'),
+    #     #     'name': request.POST.get('name'),
+    #     #     'tell_number': request.POST.get('tell_number'),
+    #     #     'email': request.POST.get('email'),
+    #     #     'scheduled_entry_datetime': request.POST.get('scheduled_entry_datetime'),
+    #     #     'scheduled_exit_datetime': request.POST.get('scheduled_exit_datetime'),
+    #     #     'purpose_admission': request.POST.get('purpose_admission'),
+    #     # }
+        
+        
+    #     print('contex:')
+    #     print(context)
+    #     print(context['form_Request'])
+    #     print(context['form_Customer'])
+        
+    #     return render(request,'management_system/request_add_check.html' ,context)
+    #     # return HttpResponseRedirect(render(context, request))
+    
 # 入館申請画面 (UC-01)
 class RequestAddCheckView(CreateView):
     model = Request
-    template_name = 'management_system/request_add_check.html'
+    template_name = 'management_system/request_add.html'
     success_url = ''
-    # success_url = '/management_system'
-    form_class = RequestForm
-    second_form_class = CustomerForm
+    # form_class = RequestForm
+    # second_form_class = CustomerForm
 
+    def form_valid(self,form):
+        print('baride-syonn')
+
+
+        return super().form_valid(form)
+
+    
     def post(self, request, *args, **kwargs):
-        print('self')
-        print(self)
-        print('request')
-        print(request)
-        print('args')
-        print(args)
-        print('kwargs')
-        print(kwargs)
+        print('post')
 
-        print('POST')
-        print(request.POST)
-        print('GET')
-        print(request.GET)
-        
-        form1 = self.form_class(request.POST)
-        form2 = self.second_form_class(request.POST)
 
-        print('form1')
-        print(form1)
-        print('form2')
-        print(form2)
+        return super().post(request, *args, **kwargs)
+    
 
-        print(request.POST.get('scheduled_entry_datetime')) 
-        print(type(request.POST.get('scheduled_entry_datetime')))
+
+    # def post(self, request, *args, **kwargs):        
+    #     form = self.form_class(request.POST)
+        # form2 = self.second_form_class(request.POST)
+
+        # print('form1')
+        # print(form1)
+        # print('form2')
+        # print(form2)
+
+        # print(request.POST.get('scheduled_entry_datetime')) 
+        # print(type(request.POST.get('scheduled_entry_datetime')))
 
         # entrys = request.POST.get('scheduled_entry_datetime')
         # exits = request.POST.get('scheduled_exit_datetime')
 
         # if form1.is_valid():
         # obj1 = form1.save(commit=False)
-        obj2 = form2.save(commit=False)
-        obj1 = obj2
+        # obj2 = form2.save(commit=False)
+        # obj1 = obj2
 
         # entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
         # exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
@@ -158,89 +177,89 @@ class RequestAddCheckView(CreateView):
         # obj1.scheduled_entry_datetime = jp.localize(entryt)
         # obj1.scheduled_exit_datetime = jp.localize(exitt)
         
-        # 入館時間よりも退館時間の方が前の時、申請を受け付けない
-        if obj1.scheduled_entry_datetime >= obj1.scheduled_exit_datetime:
-            messages.success(self.request, '入力時間が正しくありません')
-            return HttpResponseRedirect(reverse('add'))
+    #     # 入館時間よりも退館時間の方が前の時、申請を受け付けない
+    #     if obj1.scheduled_entry_datetime >= obj1.scheduled_exit_datetime:
+    #         messages.success(self.request, '入力時間が正しくありません')
+    #         return HttpResponseRedirect(reverse('add'))
 
-        # emailに該当するものをすべて取得
-        customers = list(Customer.objects.filter(email=obj2.email))
+    #     # emailに該当するものをすべて取得
+    #     customers = list(Customer.objects.filter(email=obj2.email))
         
-        if(len(customers)==0):
-            print('一致するメアドがlistに存在しない')
-        else:
-            print('一致するメアドがlistに存在する')
-        print('request')
-        print(request)
-        print('customers')
-        print(customers)
+    #     if(len(customers)==0):
+    #         print('一致するメアドがlistに存在しない')
+    #     else:
+    #         print('一致するメアドがlistに存在する')
+    #     print('request')
+    #     print(request)
+    #     print('customers')
+    #     print(customers)
 
-        # listの判別
-        hit = 0
+    #     # listの判別
+    #     hit = 0
 
-        for cus in customers:
-            print(cus.tell_number)
-            if(cus.name == obj2.name and cus.organization_name == obj2.organization_name and cus.tell_number == obj2.tell_number):
-                # そのままcustomerを使う
-                print('全件一致しました')
-                obj2 = cus
-                hit = 1
-            else:
-                # Customerを入力のものと置き換える
-                print('このデータは全件一致しませんでした')
+    #     for cus in customers:
+    #         print(cus.tell_number)
+    #         if(cus.name == obj2.name and cus.organization_name == obj2.organization_name and cus.tell_number == obj2.tell_number):
+    #             # そのままcustomerを使う
+    #             print('全件一致しました')
+    #             obj2 = cus
+    #             hit = 1
+    #         else:
+    #             # Customerを入力のものと置き換える
+    #             print('このデータは全件一致しませんでした')
         
-        # 一致しなかったときにustomerをRequestに保持させる
-        if(hit == 0):
-            customer = Customer
-            # カスタマーの追加とそれを引数に渡す
-            obj2.save()
-            print('customer save')
+    #     # 一致しなかったときにustomerをRequestに保持させる
+    #     if(hit == 0):
+    #         customer = Customer
+    #         # カスタマーの追加とそれを引数に渡す
+    #         obj2.save()
+    #         print('customer save')
         
-        obj1.email = obj2
-        obj1.request_datetime = timezone.localtime()
+    #     obj1.email = obj2
+    #     obj1.request_datetime = timezone.localtime()
 
-        # 入館時間が現在時刻よりも前の場合は申請を受け付けない
-        if obj1.scheduled_entry_datetime < obj1.request_datetime:
-            messages.success(self.request, '過去の時間に入館申請はできません')
-            return HttpResponseRedirect(reverse('add'))
+    #     # 入館時間が現在時刻よりも前の場合は申請を受け付けない
+    #     if obj1.scheduled_entry_datetime < obj1.request_datetime:
+    #         messages.success(self.request, '過去の時間に入館申請はできません')
+    #         return HttpResponseRedirect(reverse('add'))
 
-        obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
-        print(obj1.scheduled_entry_datetime)
-        print(obj2)
+    #     obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
+    #     print(obj1.scheduled_entry_datetime)
+    #     print(obj2)
 
-        # 時間の判定
-        # 承認済みの時間にかぶせて申請が入った場合のみ削除
-        # 過去の日時の申請もきっとはじいた方がいいかも？
+    #     # 時間の判定
+    #     # 承認済みの時間にかぶせて申請が入った場合のみ削除
+    #     # 過去の日時の申請もきっとはじいた方がいいかも？
 
-        # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
-        # 及び退館時間も同様
-        # 以上の二点に該当するものをfilterで持ってくる
-        requests = list(filter(lambda x:True if(obj1.scheduled_entry_datetime >= x.scheduled_entry_datetime and obj1.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
-        print(requests)
-        requests += list(filter(lambda x:True if(obj1.scheduled_exit_datetime > x.scheduled_entry_datetime and obj1.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
-        print(requests)
-        if(len(requests) != 0):
-            for req in requests:
-                if(req.approval == 1):
-                    print('すでに申請されている時間帯なのでこの時間は申請できません')
-                    print(req)
-                    messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
-                    return HttpResponseRedirect(reverse('add'))
-        obj1.save()
+    #     # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
+    #     # 及び退館時間も同様
+    #     # 以上の二点に該当するものをfilterで持ってくる
+    #     requests = list(filter(lambda x:True if(obj1.scheduled_entry_datetime >= x.scheduled_entry_datetime and obj1.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+    #     print(requests)
+    #     requests += list(filter(lambda x:True if(obj1.scheduled_exit_datetime > x.scheduled_entry_datetime and obj1.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+    #     print(requests)
+    #     if(len(requests) != 0):
+    #         for req in requests:
+    #             if(req.approval == 1):
+    #                 print('すでに申請されている時間帯なのでこの時間は申請できません')
+    #                 print(req)
+    #                 messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+    #                 return HttpResponseRedirect(reverse('add'))
+    #     obj1.save()
 
-        print('save')
-        obj1.request_id = obj1.id
-        print('dainyuu')
-        obj1.save()
+    #     print('save')
+    #     obj1.request_id = obj1.id
+    #     print('dainyuu')
+    #     obj1.save()
         
-        print('obj1.id')
-        print(obj1.id)
-        print('obj2.id')
-        print(obj2.id)
-        print('Ill send')
-        return self.form_valid(form1,obj1)
-    # else:
-    #     return self.form_invalid(form1,obj1)
+    #     print('obj1.id')
+    #     print(obj1.id)
+    #     print('obj2.id')
+    #     print(obj2.id)
+    #     print('Ill send')
+    #     return self.form_valid(form1,obj1)
+    # # else:
+    # #     return self.form_invalid(form1,obj1)
 
     def form_valid(self, form,obj):
         print('保存しました')

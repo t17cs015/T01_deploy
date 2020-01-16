@@ -3,53 +3,10 @@
  {% block title %} Add {% endblock %}
 
  {% block main %}
- <form action="{% url 'addCheck' %}" method="post">
-   <body>
-     <!-- <div class='countainer'> -->
-       <div class='header'>
-         申請情報を入力してください
-        </div>
-        <table class="ui definition table">
-          <tbody>
-            <tr>
-              <td class="two wide column">組織名</td>
-              <td>{{form_Customer.organization_name.value}}</td>
-            </tr>
-            <tr>
-              <td>名前</td>
-              <td>{{form_Customer.name.value}} </td>
-            </tr>
-            <tr>
-              <td>電話番号</td>
-              <td>{{form_Customer.tell_number.value}} </td>
-            </tr>
-            <tr>
-              <td>email</td>
-              <td>{{form_Customer.email.value}} </td>
-            </tr>
-            <td>入館予定日時</td>
-            <td>{{form_Request.scheduled_entry_datetime.value}} </td>
-          </tr>
-          <tr>
-            <td>退館予定日時</td>
-            <td>{{form_Request.scheduled_exit_datetime.value}}</td>
-          </tr>
-          <tr>
-            <td>申請理由</td>
-            <td>{{form_Request.purpose_admission.value}} </td>
-          </tr>
-          <tr>
-          </tbody>
-        </table>
-      </body>
-      
-      <input type="submit"/>
-      {% for field in form %}
-      {{ field.as_hidden }}
-      {% endfor %}
-   {% csrf_token %}
-   
-    </form>
+
+ gdjsaiglaj
+ {{form.as_p}}
+ {{form.name.value}}
     {% endblock %}
     
     
