@@ -6,7 +6,6 @@
  
  <form method="post" id='send'action="{% url 'add' %}" >
 {% csrf_token %}
- <body>
 
  <div class='countainer'>
    <div class='header'>
@@ -14,9 +13,10 @@
    </div>
    <table class="table">
   {{form.as_table}}
-</body>
+</table>
+ </div>
 </form>
-
-
+<div>
 <button class="ui blue button" form = 'send'>送信 </button>
+</div>
 {% endblock %}

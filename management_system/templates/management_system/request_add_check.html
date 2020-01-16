@@ -4,7 +4,6 @@
 
  {% block main %}
  <form action="{% url 'add' %}" method="post">
-   <body>
      <!-- <div class='countainer'> -->
        <div class='header'>
          申請情報を入力してください
@@ -41,11 +40,10 @@
           <tr>
           </tbody>
         </table>
-      </body>
+        <input type="submit">
       {% for field in form %}
       {{ field.as_hidden }}
       {% endfor %}
-      <input type="submit"/>
       
    {% csrf_token %}
    
