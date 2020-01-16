@@ -37,9 +37,15 @@ class RequestAddView(FormView):
         context = {
             'form' : form
         }
-
-        return render(self.request,'management_system/request_add_check.html' ,context)
-        # return super().form_valid(form)
+        if self.request.POST.get('next', '') == 'confirm':
+            return render(self.request,'management_system/request_add_check.html' ,context)
+        if self.request.POST.get('next', '') == 'back':
+            return render(self.request, 'management_system/request_add.html', context)
+        if self.request.POST.get('next', '') == 'create':
+            return super().form_valid(form)
+        else:
+            # 正常動作ではここは通らない。エラーページへの遷移でも良い
+            return redirect(reverse_lazy('base:top'))
 
     
     def post(self, request, *args, **kwargs):
