@@ -42,6 +42,12 @@ class RequestAddView(FormView):
         if self.request.POST.get('next', '') == 'back':
             return render(self.request, 'management_system/request_add.html', context)
         if self.request.POST.get('next', '') == 'create':
+            customer = CustomerForm(self.request.POST)
+            print(customer)
+            req = RequestForm(self.request.POST)
+            print(req)
+
+
             return super().form_valid(form)
         else:
             # 正常動作ではここは通らない。エラーページへの遷移でも良い
