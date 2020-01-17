@@ -46,9 +46,12 @@ class RequestAddView(FormView):
             requ = RequestForm(self.request.POST)
             cus = customer.save()
             req = requ.save(commit=False)
+
             req.password = ''.join([random.choice(string.digits) for i in range(4)])
             req.email = cus
             req.request_datetime = timezone.localtime()
+            print(req.email)
+            print(req.password)
             req.save()
 
             return super().form_valid(form)
