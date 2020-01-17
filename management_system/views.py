@@ -49,12 +49,7 @@ class RequestAddView(FormView):
             req.password = ''.join([random.choice(string.digits) for i in range(4)])
             req.email = cus
             req.request_datetime = timezone.localtime()
-            # print(cus)
-            print(req)
             req.save()
-            print(req)
-            
-
 
             return super().form_valid(form)
         else:
@@ -134,27 +129,7 @@ class RequestAddView(FormView):
     #     return render(request,'management_system/request_add_check.html' ,context)
     #     # return HttpResponseRedirect(render(context, request))
     
-# 入館申請画面 (UC-01)
-class RequestAddCheckView(CreateView):
-    model = Request
-    template_name = 'management_system/request_add.html'
-    success_url = ''
-    # form_class = RequestForm
-    # second_form_class = CustomerForm
-
-    def form_valid(self,form):
-        print('baride-syonn')
-
-
-        return super().form_valid(form)
-
-    
-    def post(self, request, *args, **kwargs):
-        print('post')
-
-
-        return super().post(request, *args, **kwargs)
-    
+    # 元addcheck
 
 
     # def post(self, request, *args, **kwargs):        
