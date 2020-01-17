@@ -53,6 +53,22 @@ class RequestAddView(FormView):
             if req.scheduled_entry_datetime >= req.scheduled_exit_datetime:
                 messages.success(self.request, '入力時間が正しくありません')
                 return render(self.request, 'management_system/request_add.html', context)
+            # 時間の判定
+            # 承認済みの時間にかぶせて申請が入った場合のみはじく
+
+            # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
+            # 及び退館時間も同様
+            # 以上の二点に該当するものをfilterで持ってくる
+            requests = list(filter(lambda x:True if(req.scheduled_entry_datetime >= x.scheduled_entry_datetime and req.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            print(requests)
+            if(len(requests) != 0):
+                for req in requests:
+                    if(req.approval == 1):
+                        print('すでに申請されている時間帯なのでこの時間は申請できません')
+                        print(req)
+                        messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+                        return render(self.request, 'management_system/request_add.html', context)
 
             # emailに該当するものをすべて取得
             customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
@@ -86,18 +102,6 @@ class RequestAddView(FormView):
             return redirect(reverse_lazy('base:main'))
 
     
-    # def post(self, request, *args, **kwargs):
-    #     print('post')
-
-    #     return super().post(request, *args, **kwargs)
-
-    # def get_context_data(self,**kwargs):
-    #     context = super(FormView, self).get_context_data(**kwargs)
-    #     print(context)
-    #     context['form_Request'] = RequestForm()
-    #     context['form_Customer'] = CustomerForm()
-    #     print(context)
-    #     return context
 
     # def post(self, request, *args, **kwargs):
 
@@ -129,44 +133,19 @@ class RequestAddView(FormView):
     #     customer = self.second_form_class(request.POST)
     #     req = self.form_class(queryd)
         
-    #     print(req)
-
-    #     kwargs = {
-    #         'form_Request' : req,
-    #         'form_Customer': customer,
-    #     }
-    #     context = kwargs
-        
-    #     print('contex:')
-    #     print(context)
-    #     print(context['form_Request'])
-    #     print(context['form_Customer'])
-        
-    #     return render(request,'management_system/request_add_check.html' ,context)
-    #     # return HttpResponseRedirect(render(context, request))
-    
+    #   
     # 元addcheck
 
 
     # def post(self, request, *args, **kwargs):        
-    #     form = self.form_class(request.POST)
-        # form2 = self.second_form_class(request.POST)
-
-        # print('form1')
-        # print(form1)
-        # print('form2')
-        # print(form2)
-
+  
         # print(request.POST.get('scheduled_entry_datetime')) 
         # print(type(request.POST.get('scheduled_entry_datetime')))
 
         # entrys = request.POST.get('scheduled_entry_datetime')
         # exits = request.POST.get('scheduled_exit_datetime')
 
-        # if form1.is_valid():
-        # obj1 = form1.save(commit=False)
-        # obj2 = form2.save(commit=False)
-        # obj1 = obj2
+
 
         # entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
         # exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
@@ -183,39 +162,26 @@ class RequestAddView(FormView):
         #     messages.success(self.request, '過去の時間に入館申請はできません')
         #     return HttpResponseRedirect(reverse('add'))
 
-    #     # 時間の判定
-    #     # 承認済みの時間にかぶせて申請が入った場合のみ削除
-    #     # 過去の日時の申請もきっとはじいた方がいいかも？
+        # # 時間の判定
+        # # 承認済みの時間にかぶせて申請が入った場合のみ削除
+        # # 過去の日時の申請もきっとはじいた方がいいかも？
 
-    #     # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
-    #     # 及び退館時間も同様
-    #     # 以上の二点に該当するものをfilterで持ってくる
-    #     requests = list(filter(lambda x:True if(obj1.scheduled_entry_datetime >= x.scheduled_entry_datetime and obj1.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
-    #     print(requests)
-    #     requests += list(filter(lambda x:True if(obj1.scheduled_exit_datetime > x.scheduled_entry_datetime and obj1.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
-    #     print(requests)
-    #     if(len(requests) != 0):
-    #         for req in requests:
-    #             if(req.approval == 1):
-    #                 print('すでに申請されている時間帯なのでこの時間は申請できません')
-    #                 print(req)
-    #                 messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
-    #                 return HttpResponseRedirect(reverse('add'))
+        # # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
+        # # 及び退館時間も同様
+        # # 以上の二点に該当するものをfilterで持ってくる
+        # requests = list(filter(lambda x:True if(obj1.scheduled_entry_datetime >= x.scheduled_entry_datetime and obj1.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+        # print(requests)
+        # requests += list(filter(lambda x:True if(obj1.scheduled_exit_datetime > x.scheduled_entry_datetime and obj1.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+        # print(requests)
+        # if(len(requests) != 0):
+        #     for req in requests:
+        #         if(req.approval == 1):
+        #             print('すでに申請されている時間帯なのでこの時間は申請できません')
+        #             print(req)
+        #             messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+        #             return HttpResponseRedirect(reverse('add'))
     #     obj1.save()
 
-    #     print('save')
-    #     obj1.request_id = obj1.id
-    #     print('dainyuu')
-    #     obj1.save()
-        
-    #     print('obj1.id')
-    #     print(obj1.id)
-    #     print('obj2.id')
-    #     print(obj2.id)
-    #     print('Ill send')
-    #     return self.form_valid(form1,obj1)
-    # # else:
-    # #     return self.form_invalid(form1,obj1)
 
     # def form_valid(self, form,obj):
     #     print('保存しました')
@@ -233,17 +199,6 @@ class RequestAddView(FormView):
     #     return super().form_valid(form)
 
         
-
-    # def entry(self, **kwargs):
-    #     print('hello')
-    #     request_id = self.request.POST.get('request_id')
-    #     request = get_object_or_404(Request, pk=request_id)
-    #     request.entry_datetime = timezone.localtime()
-    #     request.save()
-
-    #     return request_id
-    #     # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-   
 
    
 
