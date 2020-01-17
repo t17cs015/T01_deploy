@@ -29,11 +29,11 @@ class RequestAddView(FormView):
 
 
     def form_valid(self,form):
-        print('baride-syonn')
+        # print('baride-syonn')
         # print(form)
         # print(form.name)
         # print(form.get('name'))
-        print(form.cleaned_data['name'])
+        # print(form.cleaned_data['name'])
         context = {
             'form' : form
         }
@@ -43,21 +43,27 @@ class RequestAddView(FormView):
             return render(self.request, 'management_system/request_add.html', context)
         if self.request.POST.get('next', '') == 'create':
             customer = CustomerForm(self.request.POST)
-            print(customer)
-            req = RequestForm(self.request.POST)
+            requ = RequestForm(self.request.POST)
+            cus = customer.save()
+            req = requ.save(commit=False)
+            req.password = ''.join([random.choice(string.digits) for i in range(4)])
+            req.email = cus
+            req.request_datetime = timezone.localtime()
+            # print(cus)
             print(req)
+            req.save()
+            print(req)
+            
 
 
             return super().form_valid(form)
         else:
             # 正常動作ではここは通らない。エラーページへの遷移でも良い
-            return redirect(reverse_lazy('base:top'))
+            return redirect(reverse_lazy('base:main'))
 
     
     def post(self, request, *args, **kwargs):
         print('post')
-
-
 
         return super().post(request, *args, **kwargs)
 
@@ -119,17 +125,6 @@ class RequestAddView(FormView):
     #         'form_Customer': customer,
     #     }
     #     context = kwargs
-    #     # context['form_Request'] = RequestForm()
-    #     # context = {
-    #     #     'organization_name': request.POST.get('organization_name'),
-    #     #     'name': request.POST.get('name'),
-    #     #     'tell_number': request.POST.get('tell_number'),
-    #     #     'email': request.POST.get('email'),
-    #     #     'scheduled_entry_datetime': request.POST.get('scheduled_entry_datetime'),
-    #     #     'scheduled_exit_datetime': request.POST.get('scheduled_exit_datetime'),
-    #     #     'purpose_admission': request.POST.get('purpose_admission'),
-    #     # }
-        
         
     #     print('contex:')
     #     print(context)
@@ -275,20 +270,20 @@ class RequestAddCheckView(CreateView):
     # # else:
     # #     return self.form_invalid(form1,obj1)
 
-    def form_valid(self, form,obj):
-        print('保存しました')
+    # def form_valid(self, form,obj):
+    #     print('保存しました')
 
-        subject = ' W社DC利用申請受領のお知らせ'
-        massage = obj.email.organization_name+' '+ obj.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用申請を受け付け致しました。\n申請の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + obj.email.name + '様の申請番号を以下に記載いたします。\n\n申請番号 : ' + str(obj.request_id) + '\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://example.com/3020\n\n------------------------------\n署名\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
-        from_email = 'dbcenterw1@gmail.com'
-        recipient_list = [
-            obj.email.__str__()
-        ]
-        print('send mail')
-        send_mail(subject,massage,from_email,recipient_list)
-        messages.success(self.request, '申請を受理しました')
+    #     subject = ' W社DC利用申請受領のお知らせ'
+    #     massage = obj.email.organization_name+' '+ obj.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用申請を受け付け致しました。\n申請の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + obj.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+obj.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + obj.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + obj.email.name + '様の申請番号を以下に記載いたします。\n\n申請番号 : ' + str(obj.request_id) + '\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://example.com/3020\n\n------------------------------\n署名\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
+    #     from_email = 'dbcenterw1@gmail.com'
+    #     recipient_list = [
+    #         obj.email.__str__()
+    #     ]
+    #     print('send mail')
+    #     send_mail(subject,massage,from_email,recipient_list)
+    #     messages.success(self.request, '申請を受理しました')
 
-        return super().form_valid(form)
+    #     return super().form_valid(form)
 
         
 
