@@ -45,6 +45,10 @@ class RequestAddView(FormView):
             # 入力されたものに対してオブジェクトを生成
             req = RequestForm(self.request.POST).save(commit=False)
             cust = CustomerForm(self.request.POST).save(commit=False)
+            # 入館時間が現在時刻よりも前の場合は申請を受け付けない
+            if req.scheduled_entry_datetime < timezone.localtime():
+                messages.success(self.request, '過去の時間に入館申請はできません')
+                return render(self.request, 'management_system/request_add.html', context)
             # 入館時間よりも退館時間の方が前の時、申請を受け付けない
             if req.scheduled_entry_datetime >= req.scheduled_exit_datetime:
                 messages.success(self.request, '入力時間が正しくありません')
@@ -58,12 +62,12 @@ class RequestAddView(FormView):
                 # print(cus.tell_number)
                 if(cus.name == cust.name and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
                     # そのままcustomerを使う
-                    print(str(cus.id)+'全件一致しました')
+                    print(str(cus.id)+' 全件一致しました')
                     customer = cus
                     hit = 1
                 else:
                     # Customerを入力のものと置き換える
-                    print('このデータは全件一致しませんでした')
+                    print(str(cus.id)+' このデータは全件一致しませんでした')
             
             # 一致しなかったときにustomerをRequestに保持させる
             if(hit == 0):
@@ -96,20 +100,7 @@ class RequestAddView(FormView):
     #     return context
 
     # def post(self, request, *args, **kwargs):
-    #     print('addCheck viewwww')
-    #     print('self')
-    #     print(self)
-    #     print('request')
-    #     print(request)
-    #     print('args')
-    #     print(args)
-    #     print('kwargs')
-    #     print(kwargs)
 
-    #     print('POST')
-    #     print(request.POST)
-    #     print('GET')
-    #     print(request.GET)
 
     #     print(request.POST.get('scheduled_entry_datetime'))
         
@@ -186,55 +177,11 @@ class RequestAddView(FormView):
         # obj1.scheduled_entry_datetime = jp.localize(entryt)
         # obj1.scheduled_exit_datetime = jp.localize(exitt)
         
-    #     # 入館時間よりも退館時間の方が前の時、申請を受け付けない
-    #     if obj1.scheduled_entry_datetime >= obj1.scheduled_exit_datetime:
-    #         messages.success(self.request, '入力時間が正しくありません')
-    #         return HttpResponseRedirect(reverse('add'))
 
-        # # emailに該当するものをすべて取得
-        # customers = list(Customer.objects.filter(email=obj2.email))
-        
-        # if(len(customers)==0):
-        #     print('一致するメアドがlistに存在しない')
-        # else:
-        #     print('一致するメアドがlistに存在する')
-        # print('request')
-        # print(request)
-        # print('customers')
-        # print(customers)
-
-        # # listの判別
-        # hit = 0
-
-        # for cus in customers:
-        #     print(cus.tell_number)
-        #     if(cus.name == obj2.name and cus.organization_name == obj2.organization_name and cus.tell_number == obj2.tell_number):
-        #         # そのままcustomerを使う
-        #         print('全件一致しました')
-        #         obj2 = cus
-        #         hit = 1
-        #     else:
-        #         # Customerを入力のものと置き換える
-        #         print('このデータは全件一致しませんでした')
-        
-        # # 一致しなかったときにustomerをRequestに保持させる
-        # if(hit == 0):
-        #     customer = Customer
-        #     # カスタマーの追加とそれを引数に渡す
-        #     obj2.save()
-        #     print('customer save')
-        
-    #     obj1.email = obj2
-    #     obj1.request_datetime = timezone.localtime()
-
-    #     # 入館時間が現在時刻よりも前の場合は申請を受け付けない
-    #     if obj1.scheduled_entry_datetime < obj1.request_datetime:
-    #         messages.success(self.request, '過去の時間に入館申請はできません')
-    #         return HttpResponseRedirect(reverse('add'))
-
-    #     obj1.password = ''.join([random.choice(string.digits) for i in range(4)])
-    #     print(obj1.scheduled_entry_datetime)
-    #     print(obj2)
+        # # 入館時間が現在時刻よりも前の場合は申請を受け付けない
+        # if obj1.scheduled_entry_datetime < obj1.request_datetime:
+        #     messages.success(self.request, '過去の時間に入館申請はできません')
+        #     return HttpResponseRedirect(reverse('add'))
 
     #     # 時間の判定
     #     # 承認済みの時間にかぶせて申請が入った場合のみ削除

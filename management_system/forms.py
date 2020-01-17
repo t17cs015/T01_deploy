@@ -10,7 +10,6 @@ class CustomerForm(forms.ModelForm):
 class RequestIdForm(forms.Form):
     request_id = forms.IntegerField(label='ID')
 
-# 不要？
 class RequestForm(forms.ModelForm):
     class Meta:
         model = Request
