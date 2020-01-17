@@ -43,20 +43,39 @@ class RequestAddView(FormView):
             return render(self.request, 'management_system/request_add.html', context)
         if self.request.POST.get('next', '') == 'create':
             # 入力されたものに対してオブジェクトを生成
-            customer = CustomerForm(self.request.POST)
+            cust = CustomerForm(self.request.POST)
             requ = RequestForm(self.request.POST)
-            cus = customer.save()
             req = requ.save(commit=False)
             # 入館時間よりも退館時間の方が前の時、申請を受け付けない
             if req.scheduled_entry_datetime >= req.scheduled_exit_datetime:
                 messages.success(self.request, '入力時間が正しくありません')
                 return render(self.request, 'management_system/request_add.html', context)
 
+            # emailに該当するものをすべて取得
+            customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
+            # listの判別
+            hit = 0
+            for cus in customers:
+                # print(cus.tell_number)
+                if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                    # そのままcustomerを使う
+                    print('全件一致しました')
+                    customer = cus
+                    hit = 1
+                else:
+                    # Customerを入力のものと置き換える
+                    print('このデータは全件一致しませんでした')
+            
+            # 一致しなかったときにustomerをRequestに保持させる
+            if(hit == 0):
+                customer = cust
+                # カスタマーの追加とそれを引数に渡す
+                print('customer save')
+
+            customer.save()
             req.password = ''.join([random.choice(string.digits) for i in range(4)])
-            req.email = cus
+            req.email = customer
             req.request_datetime = timezone.localtime()
-            print(req.email)
-            print(req.password)
             req.save()
 
             return super().form_valid(form)
@@ -65,10 +84,10 @@ class RequestAddView(FormView):
             return redirect(reverse_lazy('base:main'))
 
     
-    def post(self, request, *args, **kwargs):
-        print('post')
+    # def post(self, request, *args, **kwargs):
+    #     print('post')
 
-        return super().post(request, *args, **kwargs)
+    #     return super().post(request, *args, **kwargs)
 
     # def get_context_data(self,**kwargs):
     #     context = super(FormView, self).get_context_data(**kwargs)
@@ -174,38 +193,38 @@ class RequestAddView(FormView):
     #         messages.success(self.request, '入力時間が正しくありません')
     #         return HttpResponseRedirect(reverse('add'))
 
-    #     # emailに該当するものをすべて取得
-    #     customers = list(Customer.objects.filter(email=obj2.email))
+        # # emailに該当するものをすべて取得
+        # customers = list(Customer.objects.filter(email=obj2.email))
         
-    #     if(len(customers)==0):
-    #         print('一致するメアドがlistに存在しない')
-    #     else:
-    #         print('一致するメアドがlistに存在する')
-    #     print('request')
-    #     print(request)
-    #     print('customers')
-    #     print(customers)
+        # if(len(customers)==0):
+        #     print('一致するメアドがlistに存在しない')
+        # else:
+        #     print('一致するメアドがlistに存在する')
+        # print('request')
+        # print(request)
+        # print('customers')
+        # print(customers)
 
-    #     # listの判別
-    #     hit = 0
+        # # listの判別
+        # hit = 0
 
-    #     for cus in customers:
-    #         print(cus.tell_number)
-    #         if(cus.name == obj2.name and cus.organization_name == obj2.organization_name and cus.tell_number == obj2.tell_number):
-    #             # そのままcustomerを使う
-    #             print('全件一致しました')
-    #             obj2 = cus
-    #             hit = 1
-    #         else:
-    #             # Customerを入力のものと置き換える
-    #             print('このデータは全件一致しませんでした')
+        # for cus in customers:
+        #     print(cus.tell_number)
+        #     if(cus.name == obj2.name and cus.organization_name == obj2.organization_name and cus.tell_number == obj2.tell_number):
+        #         # そのままcustomerを使う
+        #         print('全件一致しました')
+        #         obj2 = cus
+        #         hit = 1
+        #     else:
+        #         # Customerを入力のものと置き換える
+        #         print('このデータは全件一致しませんでした')
         
-    #     # 一致しなかったときにustomerをRequestに保持させる
-    #     if(hit == 0):
-    #         customer = Customer
-    #         # カスタマーの追加とそれを引数に渡す
-    #         obj2.save()
-    #         print('customer save')
+        # # 一致しなかったときにustomerをRequestに保持させる
+        # if(hit == 0):
+        #     customer = Customer
+        #     # カスタマーの追加とそれを引数に渡す
+        #     obj2.save()
+        #     print('customer save')
         
     #     obj1.email = obj2
     #     obj1.request_datetime = timezone.localtime()
