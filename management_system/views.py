@@ -25,15 +25,9 @@ class RequestAddView(FormView):
     template_name = 'management_system/request_add.html'
     success_url = '/management_system'
     form_class = RequestSendForm
-    # second_form_class = CustomerForm
 
 
     def form_valid(self,form):
-        # print('baride-syonn')
-        # print(form)
-        # print(form.name)
-        # print(form.get('name'))
-        # print(form.cleaned_data['name'])
         context = {
             'form' : form
         }
@@ -117,41 +111,8 @@ class RequestAddView(FormView):
 
         return 0
 
-    
-
-    # def post(self, request, *args, **kwargs):
-
-
-    #     print(request.POST.get('scheduled_entry_datetime'))
-        
-    #     entrys = request.POST.get('scheduled_entry_datetime')
-    #     exits = request.POST.get('scheduled_exit_datetime')
-
-    #     print(type(request.POST.get('tell_number')))
-
-    #     entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
-    #     exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
-
-    #     print(entryt)
-
-    #     jp = pytz.timezone('Asia/Tokyo')
-    #     print(jp.localize(exitt))
-
-    #     en = str(jp.localize(entryt))
-    #     ex = str(jp.localize(exitt))
-
-
-    #     queryd = QueryDict('scheduled_entry_datetime='+en[0:19]+'&scheduled_exit_datetime='+ex[0:19]+'&purpose_admission='+request.POST.get('purpose_admission'),mutable=True)
-    #     # queryd = QueryDict('purpose_admission=a',mutable=True)
-    #     print('querydict')
-    #     print(queryd)
-
-    #     customer = self.second_form_class(request.POST)
-    #     req = self.form_class(queryd)
-        
-    #   
     # 元addcheck
-
+    # カレンダー関係のだけ残ってます
 
     # def post(self, request, *args, **kwargs):        
   
@@ -160,8 +121,6 @@ class RequestAddView(FormView):
 
         # entrys = request.POST.get('scheduled_entry_datetime')
         # exits = request.POST.get('scheduled_exit_datetime')
-
-
 
         # entryt= timezone.datetime.strptime(entrys,'%Y-%m-%dT%H:%M')
         # exitt = timezone.datetime.strptime(exits,'%Y-%m-%dT%H:%M')
@@ -172,38 +131,6 @@ class RequestAddView(FormView):
         # req1.scheduled_entry_datetime = jp.localize(entryt)
         # obj1.scheduled_exit_datetime = jp.localize(exitt)
         
-
-        # # 入館時間が現在時刻よりも前の場合は申請を受け付けない
-        # if obj1.scheduled_entry_datetime < obj1.request_datetime:
-        #     messages.success(self.request, '過去の時間に入館申請はできません')
-        #     return HttpResponseRedirect(reverse('add'))
-
-        # # 時間の判定
-        # # 承認済みの時間にかぶせて申請が入った場合のみ削除
-        # # 過去の日時の申請もきっとはじいた方がいいかも？
-
-        # # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
-        # # 及び退館時間も同様
-        # # 以上の二点に該当するものをfilterで持ってくる
-        # requests = list(filter(lambda x:True if(obj1.scheduled_entry_datetime >= x.scheduled_entry_datetime and obj1.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
-        # print(requests)
-        # requests += list(filter(lambda x:True if(obj1.scheduled_exit_datetime > x.scheduled_entry_datetime and obj1.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
-        # print(requests)
-        # if(len(requests) != 0):
-        #     for req in requests:
-        #         if(req.approval == 1):
-        #             print('すでに申請されている時間帯なのでこの時間は申請できません')
-        #             print(req)
-        #             messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
-        #             return HttpResponseRedirect(reverse('add'))
-    #     obj1.save()
-
-
-
-
-        
-
-   
 
 # 実績入力画面 (UC-02)
 class RequestLoginView(TemplateView):
