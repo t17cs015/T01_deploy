@@ -26,7 +26,7 @@ class Request(models.Model):
     request_datetime = models.DateTimeField('date published' ,blank = True,null = True)
     email = models.ForeignKey(Customer, on_delete=models.CASCADE)
     approval = models.IntegerField(default=0)
-    password = models.IntegerField(default=0)
+    password = models.IntegerField(default=None)
 
     def __str__(self):
         return "{} ({})".format(self.pk , self.email)

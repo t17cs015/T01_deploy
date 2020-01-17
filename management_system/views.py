@@ -286,7 +286,7 @@ class RequestPerformanceView(TemplateView):
         else:  
             print('getSucsess')
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
-            customer = get_object_or_404(Customer,pk=request.request_id)
+            customer = get_object_or_404(Customer,pk=request.email.pk)
             print(request)
 
             
