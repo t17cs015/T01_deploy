@@ -43,9 +43,8 @@ class RequestAddView(FormView):
             return render(self.request, 'management_system/request_add.html', context)
         if self.request.POST.get('next', '') == 'create':
             # 入力されたものに対してオブジェクトを生成
-            cust = CustomerForm(self.request.POST)
-            requ = RequestForm(self.request.POST)
-            req = requ.save(commit=False)
+            req = RequestForm(self.request.POST).save(commit=False)
+            cust = CustomerForm(self.request.POST).save(commit=False)
             # 入館時間よりも退館時間の方が前の時、申請を受け付けない
             if req.scheduled_entry_datetime >= req.scheduled_exit_datetime:
                 messages.success(self.request, '入力時間が正しくありません')
@@ -57,9 +56,9 @@ class RequestAddView(FormView):
             hit = 0
             for cus in customers:
                 # print(cus.tell_number)
-                if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                if(cus.name == cust.name and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
                     # そのままcustomerを使う
-                    print('全件一致しました')
+                    print(str(cus.id)+'全件一致しました')
                     customer = cus
                     hit = 1
                 else:
@@ -70,7 +69,6 @@ class RequestAddView(FormView):
             if(hit == 0):
                 customer = cust
                 # カスタマーの追加とそれを引数に渡す
-                print('customer save')
 
             customer.save()
             req.password = ''.join([random.choice(string.digits) for i in range(4)])
