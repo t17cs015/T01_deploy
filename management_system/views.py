@@ -42,10 +42,15 @@ class RequestAddView(FormView):
         if self.request.POST.get('next', '') == 'back':
             return render(self.request, 'management_system/request_add.html', context)
         if self.request.POST.get('next', '') == 'create':
+            # 入力されたものに対してオブジェクトを生成
             customer = CustomerForm(self.request.POST)
             requ = RequestForm(self.request.POST)
             cus = customer.save()
             req = requ.save(commit=False)
+            # 入館時間よりも退館時間の方が前の時、申請を受け付けない
+            if req.scheduled_entry_datetime >= req.scheduled_exit_datetime:
+                messages.success(self.request, '入力時間が正しくありません')
+                return render(self.request, 'management_system/request_add.html', context)
 
             req.password = ''.join([random.choice(string.digits) for i in range(4)])
             req.email = cus
