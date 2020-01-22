@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView, RequestFixView
+from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView, RequestFixView ,RequestFixLoginView
 
 from . import views
 
@@ -14,5 +14,6 @@ urlpatterns = [
     path('add/', RequestAddView.as_view(),name='add'), 
     path('login/',RequestLoginView.as_view(),name='login'),
     path('performance/<int:pk>/', RequestPerformanceView.as_view(),name='performance'), 
-    path('fix/', RequestFixView.as_view(),name='fix'),
+    path('fix/login/',RequestFixLoginView.as_view(),name='fixlogin'),
+    path('fix/<int:pk>', RequestFixView.as_view(),name='fix'),
 ]

@@ -3,10 +3,10 @@
 {% block title %} Fix {% endblock %}
 
 {% block main %}
-<form action="{% url 'fix' %}" method="post">
+<form method="post">
 {% csrf_token %}
 <table>
-    {{ form_id.as_table }}
+    {{ form.as_table }}
 </table>
 <input type="submit"/>
 </form>

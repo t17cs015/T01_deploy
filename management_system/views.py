@@ -232,23 +232,70 @@ class RequestPerformanceView(TemplateView):
 
         return context
     
-class RequestFixView(TemplateView):
+# 実績入力画面 (UC-02)
+class RequestFixLoginView(TemplateView):
     model = Request
-    template_name = 'management_system/request_fix.html'
-    success_url = 'main/'
+    template_name = 'management_system/request_login.html'
 
     def post(self, request, *args, **kwargs):
         request_id = self.request.POST.get('request_id')
-        request.entry_datetime = timezone.localtime() 
+        requests = list(Request.objects.filter(id=request_id))
+        if len(requests) == 0:
+            print('このidは存在しません')
+            messages.success(self.request, 'idとパスワードが一致しません')
+            return HttpResponseRedirect(reverse('fixlogin'))
 
-        
         request = get_object_or_404(Request, pk=request_id)
-        request.save()
-        return HttpResponseRedirect(reverse('main'))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form_id'] = RequestIdForm()
-        context['form'] = CustomerForm()
+        print('入力されたpas : ' + self.request.POST.get('password'))
+        print('本来のpas : ' + str(request.password))
+        print('入館時間 : ' + str(request.entry_datetime))
+        print('退館時間 : ' + str(request.exit_datetime))
         
+        if(int(self.request.POST.get('password')) != request.password ):
+            print('login fail')
+            messages.success(self.request, 'idとパスワードが一致しません')
+            return HttpResponseRedirect(reverse('fixlogin'))
+        
+        # ここは未承認かの判定にしたい
+        # elif(request.entry_datetime!=None and request.exit_datetime!=None):
+        #     print('この申請は既に退館済みです')
+        #     messages.success(self.request, 'この申請は既に退館済みです')
+        #     return HttpResponseRedirect(reverse('login'))
+        
+        else:
+            print('login sucsess')
+            print('loginId:' + request_id)
+            return HttpResponseRedirect(reverse('fix', kwargs = {'pk':request_id}))
+        
+    def get_context_data(self, **kwarg):
+        print('make forms')
+        context = super().get_context_data(**kwarg)
+        context['form_id'] = RequestIdForm()
+        context['form_password'] = RequestPasswordForm()
         return context
+
+
+
+
+class RequestFixView(UpdateView):
+    model = Request
+    template_name = 'management_system/request_fix.html'
+    success_url = '../'
+    # form = RequestSendForm
+    fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime','entry_datetime','exit_datetime', 'purpose_admission',  'email']
+
+    # def post(self, request, *args, **kwargs):
+    #     request_id = self.request.POST.get('request_id')
+    #     request.entry_datetime = timezone.localtime() 
+
+        
+    #     request = get_object_or_404(Request, pk=request_id)
+    #     request.save()
+    #     return HttpResponseRedirect(reverse('main'))
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['form_id'] = RequestIdForm()
+    #     context['form'] = CustomerForm()
+        
+    #     return context
