@@ -14,8 +14,8 @@ from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestSe
 from .forms import CustomerForm
 # from extra_views import InlineFormSet , UpdateWithInlinesView
 
-
 from .models import Request , Customer
+import copy
 
 class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
@@ -282,21 +282,39 @@ class RequestFixView(UpdateView):
     success_url = '../'
     # form = RequestSendForm
     fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime','entry_datetime','exit_datetime', 'purpose_admission']
+    cust = Customer
 
     def get_context_data(self, **kwarg):
         print('make forms:RexestFix')
         context = super().get_context_data(**kwarg)
+        self.cust = Customer(copy.deepcopy(context['object'].email))
         # context['form_customer'] = CustomerForm()
+        # self.cust = Customer(
+        #     # name = context['object'].email.name,
+        #     name = "gjkfdaljg"
+        # )
+        print(self.cust.name)
+        print(context['object'].email.name)
+        # print(kwarg)
+        # context['pk'] = kwarg.get('pk')
         return context
 
     def form_valid(self,form):
         print(self.request.POST)
-        customer = Customer
-        customer.email = self.request.POST.get('email')
-        customer.organization_name = self.request.POST.get('organization_name')
-        customer.tell_number = self.request.POST.get('tell_number')
-        customer.name = self.request.POST.get('name')
-        
-        print(customer)
+        # customer = Customer
+        # customer.email = self.request.POST.get('email')
+        # customer.organization_name = self.request.POST.get('organization_name')
+        # customer.tell_number = self.request.POST.get('tell_number')
+        # customer.name = self.request.POST.get('name')
+        # print(self.request.POST.get('pk'))
+
+        # print(form.id)
+        # urlから持って来る
+        print(self.request.POST.get('pk'))
+        print('cust')
+        print(self.cust.name)
+        print(self.cust.email)
+        # print('customer')
+        # print(customer.name)
         
         return super().form_valid(form)
