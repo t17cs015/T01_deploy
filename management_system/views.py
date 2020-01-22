@@ -12,6 +12,7 @@ from . import views
 from django.views.generic.edit import CreateView , UpdateView , FormView
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestSendForm
 from .forms import CustomerForm
+# from extra_views import InlineFormSet , UpdateWithInlinesView
 
 
 from .models import Request , Customer
@@ -275,27 +276,22 @@ class RequestFixLoginView(TemplateView):
         return context
 
 
-
-
 class RequestFixView(UpdateView):
     model = Request
     template_name = 'management_system/request_fix.html'
     success_url = '../'
     # form = RequestSendForm
-    fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime','entry_datetime','exit_datetime', 'purpose_admission',  'email']
+    fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime','entry_datetime','exit_datetime', 'purpose_admission']
 
-    # def post(self, request, *args, **kwargs):
-    #     request_id = self.request.POST.get('request_id')
-    #     request.entry_datetime = timezone.localtime() 
+    def get_context_data(self, **kwarg):
+        print('make forms:RexestFix')
+        context = super().get_context_data(**kwarg)
+        # context['form_customer'] = CustomerForm()
+        print(context['object'].email.name)
+        return context
 
-        
-    #     request = get_object_or_404(Request, pk=request_id)
-    #     request.save()
-    #     return HttpResponseRedirect(reverse('main'))
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['form_id'] = RequestIdForm()
-    #     context['form'] = CustomerForm()
-        
-    #     return context
+    def form_valid(self,form):
+        print(self.request.POST)
+        customer = Customer
+        customer.email = self.request.POST.get('email')
+        return super().form_valid(form)
