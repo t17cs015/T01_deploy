@@ -287,11 +287,16 @@ class RequestFixView(UpdateView):
         print('make forms:RexestFix')
         context = super().get_context_data(**kwarg)
         # context['form_customer'] = CustomerForm()
-        print(context['object'].email.name)
         return context
 
     def form_valid(self,form):
         print(self.request.POST)
         customer = Customer
         customer.email = self.request.POST.get('email')
+        customer.organization_name = self.request.POST.get('organization_name')
+        customer.tell_number = self.request.POST.get('tell_number')
+        customer.name = self.request.POST.get('name')
+        
+        print(customer)
+        
         return super().form_valid(form)
