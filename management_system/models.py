@@ -23,11 +23,10 @@ class Request(models.Model):
     entry_datetime = models.DateTimeField('date published', blank = True,null = True)
     exit_datetime = models.DateTimeField('date published' , blank = True,null = True)
     purpose_admission = models.CharField(max_length=255)
-    request_datetime = models.DateTimeField('date published')
+    request_datetime = models.DateTimeField('date published' ,blank = True,null = True)
     email = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    request_id = models.IntegerField(blank = True,null = True)
     approval = models.IntegerField(default=0)
     password = models.IntegerField(default=None)
 
     def __str__(self):
-        return "{} ({})".format(self.request_id , self.email)
+        return "{} ({})".format(self.pk , self.email)

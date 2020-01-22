@@ -1,14 +1,23 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
  {% block title %} Add {% endblock %}
 
  {% block main %}
- <form action="{% url 'add' %}" method="post">
- {% csrf_token %}
- <table>
-    {{ form.as_table }}
-</table>
- <input type="submit"/>
- </form>
- {% endblock %}
+ 
+ <form method='post' id='send'action='{% url 'add' %}' >
+{% csrf_token %}
 
+ <div class='countainer'>
+   <div class='header'>
+     申請情報を入力してください
+   </div>
+   <table class='table'>
+  {{form.as_table}}
+</table>
+ </div>
+</form>
+<div>
+<button class='ui orange button' type='submit' name='next' value='confirm' form = 'send'>確認画面へ</button>
+        
+</div>
+{% endblock %}

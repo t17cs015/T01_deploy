@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+ {% block title %} Add {% endblock %}
+
+ {% block main %}
+ <form action='{% url 'add' %}' method='post'>
+     <!-- <div class='countainer'> -->
+       <div class='header'>
+         申請情報を確認してください
+        </div>
+        <table class='ui definition table'>
+          <tbody>
+            <tr>
+              <td class='two wide column'>組織名</td>
+              <td>{{form.organization_name.value}}</td>
+            </tr>
+            <tr>
+              <td>名前</td>
+              <td>{{form.name.value}} </td>
+            </tr>
+            <tr>
+              <td>電話番号</td>
+              <td>{{form.tell_number.value}} </td>
+            </tr>
+            <tr>
+              <td>email</td>
+              <td>{{form.email.value}} </td>
+            </tr>
+            <td>入館予定日時</td>
+            <td>{{form.scheduled_entry_datetime.value}} </td>
+          </tr>
+          <tr>
+            <td>退館予定日時</td>
+            <td>{{form.scheduled_exit_datetime.value}}</td>
+          </tr>
+          <tr>
+            <td>申請理由</td>
+            <td>{{form.purpose_admission.value}} </td>
+          </tr>
+          <tr>
+          </tbody>
+        </table>
+        <div>
+          以上の内容で入館申請を行います。問題なければ申請ボタンを推してください。
+          再入力する場合は戻るボタンを推してください。(漢字ミスは仕様です)
+        </div>
+        <!-- <input type='submit'> -->
+        <button class='ui button grey' type='submit' name='next' value='back'>戻る</button>
+        <button class='ui blue button' type='submit' name='next' value='create'>作成</button>
+    
+      {% for field in form %}
+      {{ field.as_hidden }}
+      {% endfor %}
+      
+   {% csrf_token %}
+   
+    </form>
+    {% endblock %}
+    
+    
