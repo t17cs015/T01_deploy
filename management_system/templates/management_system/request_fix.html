@@ -7,7 +7,7 @@
 {% csrf_token %}
 <table>
     {{ form.as_table }}
-    {{ form_cutomer.as_table }}
+    <!-- {{ form_cutomer.as_table }} -->
 </table>
 {{ object.email.name }}
 <input type="text" name="name" value="{{object.email.name}}">
@@ -15,6 +15,8 @@
 <input type="text" name="tell_number" value="{{object.email.tell_number}}">
 <input type="text" name="email" value="{{object.email.email}}">
 <br>
+      <!-- {{ pk.as_hidden }} -->
+      {{ pk.as_table }}
 <input type="submit"/>
 </form>
 {% endblock %} 

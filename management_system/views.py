@@ -287,34 +287,58 @@ class RequestFixView(UpdateView):
     def get_context_data(self, **kwarg):
         print('make forms:RexestFix')
         context = super().get_context_data(**kwarg)
-        self.cust = Customer(copy.deepcopy(context['object'].email))
-        # context['form_customer'] = CustomerForm()
-        # self.cust = Customer(
-        #     # name = context['object'].email.name,
-        #     name = "gjkfdaljg"
-        # )
-        print(self.cust.name)
-        print(context['object'].email.name)
-        # print(kwarg)
-        # context['pk'] = kwarg.get('pk')
+        self.cust = Customer(context['object'].email)
+
+        # print(self.cust.pk)
+        # context['pk'] = self.cust.pk
+        # print(context['pk'])
         return context
 
-    def form_valid(self,form):
-        print(self.request.POST)
-        # customer = Customer
-        # customer.email = self.request.POST.get('email')
-        # customer.organization_name = self.request.POST.get('organization_name')
-        # customer.tell_number = self.request.POST.get('tell_number')
-        # customer.name = self.request.POST.get('name')
-        # print(self.request.POST.get('pk'))
-
-        # print(form.id)
-        # urlから持って来る
-        print(self.request.POST.get('pk'))
-        print('cust')
-        print(self.cust.name)
-        print(self.cust.email)
-        # print('customer')
-        # print(customer.name)
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        print(self.object.email.email)
+        print(self.request.POST.get('email'))
+        if(self.object.email.email == self.request.POST.get('email')):
+            if(self.object.email.name == self.request.POST.get('name')):
+                if(self.object.email.organization_name == self.request.POST.get('organization_name')):
+                    if(self.object.email.tell_number == self.request.POST.get('tell_number')):
+                        print('全件一致しました')
+                        return super().post(request, *args, **kwargs)
         
+        print('一致しなかったのでDBから顧客情報を持ってきます')
+
+        # emailに該当するものをすべて取得
+        customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
+        # listの判別
+        hit = 0
+        for cus in customers:
+            # print(cus.tell_number)
+            if(cus.name == self.cust.name and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                # そのままcustomerを使う
+                print(str(cus.id)+' 全件一致しました')
+                customer = cus
+                hit = 1
+            else:
+                # Customerを入力のものと置き換える
+                print(str(cus.id)+' このデータは全件一致しませんでした')
+        
+        # 一致しなかったときにustomerをRequestに保持させる
+        if(hit == 0):
+            customer = self.cust
+        
+        # カスタマーの追加とそれを引数に渡す
+        cust = CustomerForm(self.request.POST).save()
+
+        self.object.email = cust
+        print(self.object.email)
+
+        self.object.save()
+
+        # self.sendMail(form,req)
+        # return super().form_valid(form)
+
+
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self,form):
         return super().form_valid(form)
