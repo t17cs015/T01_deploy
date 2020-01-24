@@ -3,24 +3,32 @@
 
 {% block main %}
 <form method="get" action="" name="filter_form">
-    <legend>test</legend>
     <div>
-        <span>アカハラ</span>
-        <select name="order">
-            <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>おり</option>
-            <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>のぼ</option>
+        <span>組織名検索</span>
+        <input type="search" id="filter_name" name="name" placeholder="組織名" value="{{ searched_string }}">
+        <button id="filter">検索</button>
+    </div>
+    <div>
+        <span>ソート</span>
+        <select name="order" onchange="document.forms.filter_form.submit()">
+            <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
+            <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
         </select>
     </div>
-    <div>
-        <span>サレジオ</span>
-        <input type="search" id="filter_name" name="name" placeholder="組織名">
-    </div>
-    <button id="filter">y野j一</button>
 </form>
-<table>
+<style type="text/css">
+<!--
+a { display:block; width:100%; height:100%; }
+-->
+</style>
+<table border="1">
     <thead>
         <tr>
-            <th>申請日時</th>
+            <th rowspan="2">申請日時</th>
+            <th colspan="2">利用者情報</th>
+            <th colspan="4">入退館情報</th>
+        </tr>
+        <tr>
             <th>組織名</th>
             <th>氏名</th>
             <th>入館予定日時</th>
@@ -32,15 +40,17 @@
     <tbody>
     {% for request in object_list %}
         <tr>
-            <td scope = "row"> {{ request.request_datetime }}</td>
-            <td>{{ request.email.name }}</td>
-            <td>{{ request.email.organization_name }}</td>
-            <td>{{ request.scheduled_entry_datetime }}</td>
-            <td>{% if request.entry_datetime == None %} -- {% endif %}
-                {% if request.entry_datetime != None %} {{ request.entry_datetime}} {% endif %}</td>
-            <td>{{ request.scheduled_exit_datetime }}</td>
-            <td>{% if request.exit_datetime == None %} -- {% endif %}
-                {% if request.exit_datetime != None %} {{ request.exit_datetime}} {% endif %}</td>
+            <td scope = "row"><a href="https://google.com/search?q={{ request.pk }}">{{ request.request_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.organization_name }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.name }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_entry_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.entry_datetime == None %}--{% endif %}
+                                             {% if request.entry_datetime != None %}{{ request.entry_datetime}}{% endif %}
+                                             </a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_exit_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.exit_datetime == None %}--{% endif %}
+                                             {% if request.exit_datetime != None %}{{ request.exit_datetime}}{% endif %}
+                                             </a></td>
         </tr>
     {% endfor %}
     </tbody>
