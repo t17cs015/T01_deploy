@@ -177,15 +177,13 @@ class RequestListView(LoginRequiredMixin, ListView):
     login_url = 'admin_login'
     template_name = 'management_system/admin_list.html'
     ascending_order = False
+    searched_string = ""
 
     def get_context_data(self, **kwargs):
         context = super(RequestListView, self).get_context_data(**kwargs)
 
-        #if ascending_order:
-            #context["ascending_order"] = "true"
         context["ascending_order"] = "true" if self.ascending_order == True else "false"
-        print(self.ascending_order)
-        #context["ascending_order"] = "true"
+        context["searched_string"] = self.searched_string
 
         return context
 
@@ -197,6 +195,9 @@ class RequestListView(LoginRequiredMixin, ListView):
 
         if q_name is not None:
             results = results.filter(email__organization_name__contains=q_name)
+            self.searched_string = q_name
+        else:
+            self.searched_string = ""
 
         if q_order == "desce":
             self.ascending_order = False
