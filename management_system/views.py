@@ -299,6 +299,7 @@ class RequestFixView(UpdateView):
                 if(self.object.email.organization_name == self.request.POST.get('organization_name')):
                     if(self.object.email.tell_number == self.request.POST.get('tell_number')):
                         print('全件一致しました')
+                        self.sendMail(self.object)
                         return super().post(request, *args, **kwargs)
         
         print('一致しなかったのでDBから顧客情報を持ってきます')
