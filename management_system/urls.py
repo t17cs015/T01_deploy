@@ -1,10 +1,6 @@
 from django.urls import path
-<<<<<<< HEAD
-from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView
-from .views import AdminLoginView, RequestListView
-=======
 from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView, RequestFixView ,RequestFixLoginView
->>>>>>> master
+from .views import AdminLoginView, RequestListView
 
 from . import views
 
