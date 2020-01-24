@@ -233,7 +233,7 @@ class RequestPerformanceView(TemplateView):
 
         return context
     
-# 実績入力画面 (UC-02)
+# 実績修正画面ログイン (UC-05)
 class RequestFixLoginView(TemplateView):
     model = Request
     template_name = 'management_system/request_login.html'
@@ -275,7 +275,7 @@ class RequestFixLoginView(TemplateView):
         context['form_password'] = RequestPasswordForm()
         return context
 
-
+# 実績修正画面 (UC-05)
 class RequestFixView(UpdateView):
     model = Request
     template_name = 'management_system/request_fix.html'
@@ -288,10 +288,6 @@ class RequestFixView(UpdateView):
         print('make forms:RexestFix')
         context = super().get_context_data(**kwarg)
         self.cust = Customer(context['object'].email)
-
-        # print(self.cust.pk)
-        # context['pk'] = self.cust.pk
-        # print(context['pk'])
         return context
 
     def post(self, request, *args, **kwargs):
@@ -331,14 +327,23 @@ class RequestFixView(UpdateView):
 
         self.object.email = cust
         print(self.object.email)
-
         self.object.save()
-
-        # self.sendMail(form,req)
-        # return super().form_valid(form)
-
+        self.sendMail(self.object)
 
         return super().post(request, *args, **kwargs)
 
-    def form_valid(self,form):
-        return super().form_valid(form)
+    def sendMail(self, req):
+        print('保存しました')
+
+        subject = ' W社DC利用修正受領のお知らせ'
+        massage = req.email.organization_name+' '+ req.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用修正を受け付け致しました。\n申請修正の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + req.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+req.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + req.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + req.email.name + '様の申請番号を以下に記載いたします。\n\n申請番号 : ' + str(req.pk) + '\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://example.com/3020\n\n------------------------------\n署名\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
+        from_email = 'dbcenterw1@gmail.com'
+        recipient_list = [
+            req.email.__str__()
+        ]
+        print('send mail')
+        send_mail(subject,massage,from_email,recipient_list)
+        messages.success(self.request, '修正を受理しました')
+
+        return 0
+    
