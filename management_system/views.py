@@ -12,9 +12,10 @@ from . import views
 from django.views.generic.edit import CreateView , UpdateView , FormView
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestSendForm
 from .forms import CustomerForm
-
+# from extra_views import InlineFormSet , UpdateWithInlinesView
 
 from .models import Request , Customer
+import copy
 
 class RequestMainView(TemplateView):
     template_name = 'management_system/request_main.html'
@@ -231,4 +232,119 @@ class RequestPerformanceView(TemplateView):
                 print('already logined')
 
         return context
+    
+# 実績修正画面ログイン (UC-05)
+class RequestFixLoginView(TemplateView):
+    model = Request
+    template_name = 'management_system/request_login.html'
 
+    def post(self, request, *args, **kwargs):
+        request_id = self.request.POST.get('request_id')
+        requests = list(Request.objects.filter(id=request_id))
+        if len(requests) == 0:
+            print('このidは存在しません')
+            messages.success(self.request, 'idとパスワードが一致しません')
+            return HttpResponseRedirect(reverse('fixlogin'))
+
+        request = get_object_or_404(Request, pk=request_id)
+        print('入力されたpas : ' + self.request.POST.get('password'))
+        print('本来のpas : ' + str(request.password))
+        print('入館時間 : ' + str(request.entry_datetime))
+        print('退館時間 : ' + str(request.exit_datetime))
+        
+        if(int(self.request.POST.get('password')) != request.password ):
+            print('login fail')
+            messages.success(self.request, 'idとパスワードが一致しません')
+            return HttpResponseRedirect(reverse('fixlogin'))
+        
+        # ここは未承認かの判定にしたい
+        if(request.approval!=0):
+            print('この申請は既に承認済みです')
+            messages.success(self.request, 'この申請は既に承認済みのため修正できません')
+            return HttpResponseRedirect(reverse('fixlogin'))
+        
+        else:
+            print('login sucsess')
+            print('loginId:' + request_id)
+            return HttpResponseRedirect(reverse('fix', kwargs = {'pk':request_id}))
+        
+    def get_context_data(self, **kwarg):
+        print('make forms')
+        context = super().get_context_data(**kwarg)
+        context['form_id'] = RequestIdForm()
+        context['form_password'] = RequestPasswordForm()
+        return context
+
+# 実績修正画面 (UC-05)
+class RequestFixView(UpdateView):
+    model = Request
+    template_name = 'management_system/request_fix.html'
+    success_url = '../'
+    # form = RequestSendForm
+    fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime','entry_datetime','exit_datetime', 'purpose_admission']
+    cust = Customer
+
+    def get_context_data(self, **kwarg):
+        print('make forms:RexestFix')
+        context = super().get_context_data(**kwarg)
+        self.cust = Customer(context['object'].email)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        print(self.object.email.email)
+        print(self.request.POST.get('email'))
+        if(self.object.email.email == self.request.POST.get('email')):
+            if(self.object.email.name == self.request.POST.get('name')):
+                if(self.object.email.organization_name == self.request.POST.get('organization_name')):
+                    if(self.object.email.tell_number == self.request.POST.get('tell_number')):
+                        print('全件一致しました')
+                        self.sendMail(self.object)
+                        return super().post(request, *args, **kwargs)
+        
+        print('一致しなかったのでDBから顧客情報を持ってきます')
+
+        # emailに該当するものをすべて取得
+        customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
+        # listの判別
+        hit = 0
+        for cus in customers:
+            # print(cus.tell_number)
+            if(cus.name == self.cust.name and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                # そのままcustomerを使う
+                print(str(cus.id)+' 全件一致しました')
+                customer = cus
+                hit = 1
+            else:
+                # Customerを入力のものと置き換える
+                print(str(cus.id)+' このデータは全件一致しませんでした')
+        
+        # 一致しなかったときにustomerをRequestに保持させる
+        if(hit == 0):
+            customer = self.cust
+        
+        # カスタマーの追加とそれを引数に渡す
+        cust = CustomerForm(self.request.POST).save()
+
+        self.object.email = cust
+        print(self.object.email)
+        self.object.save()
+        self.sendMail(self.object)
+
+        return super().post(request, *args, **kwargs)
+
+    def sendMail(self, req):
+        print('保存しました')
+
+        subject = ' W社DC利用修正受領のお知らせ'
+        massage = req.email.organization_name+' '+ req.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用修正を受け付け致しました。\n申請修正の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + req.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+req.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + req.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + req.email.name + '様の申請番号を以下に記載いたします。\n\n申請番号 : ' + str(req.pk) + '\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://example.com/3020\n\n------------------------------\n署名\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
+        from_email = 'dbcenterw1@gmail.com'
+        recipient_list = [
+            req.email.__str__()
+        ]
+        print('send mail')
+        send_mail(subject,massage,from_email,recipient_list)
+        messages.success(self.request, '修正を受理しました')
+
+        return 0
+    
