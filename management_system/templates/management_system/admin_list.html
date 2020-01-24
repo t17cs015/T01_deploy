@@ -4,16 +4,16 @@
 {% block main %}
 <form method="get" action="" name="filter_form">
     <div>
-        <span>ソート</span>
-        <select name="order" onchange="this.filter_form.submit()">
-            <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
-            <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
-        </select>
-    </div>
-    <div>
         <span>組織名検索</span>
         <input type="search" id="filter_name" name="name" placeholder="組織名" value="{{ searched_string }}">
         <button id="filter">検索</button>
+    </div>
+    <div>
+        <span>ソート</span>
+        <select name="order" onchange="document.forms.filter_form.submit()">
+            <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
+            <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
+        </select>
     </div>
 </form>
 <style type="text/css">
@@ -40,15 +40,15 @@ a { display:block; width:100%; height:100%; }
     <tbody>
     {% for request in object_list %}
         <tr>
-            <td scope = "row"><a href="https://google.com">{{ request.request_datetime }}</a></td>
-            <td><a href="https://google.com">{{ request.email.organization_name }}</a></td>
-            <td><a href="https://google.com">{{ request.email.name }}</a></td>
-            <td><a href="https://google.com">{{ request.scheduled_entry_datetime }}</a></td>
-            <td><a href="https://google.com">{% if request.entry_datetime == None %}--{% endif %}
+            <td scope = "row"><a href="https://google.com/search?q={{ request.pk }}">{{ request.request_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.organization_name }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.name }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_entry_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.entry_datetime == None %}--{% endif %}
                                              {% if request.entry_datetime != None %}{{ request.entry_datetime}}{% endif %}
                                              </a></td>
-            <td><a href="https://google.com">{{ request.scheduled_exit_datetime }}</a></td>
-            <td><a href="https://google.com">{% if request.exit_datetime == None %}--{% endif %}
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_exit_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.exit_datetime == None %}--{% endif %}
                                              {% if request.exit_datetime != None %}{{ request.exit_datetime}}{% endif %}
                                              </a></td>
         </tr>
