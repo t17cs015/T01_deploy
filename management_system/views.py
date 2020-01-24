@@ -281,7 +281,7 @@ class RequestFixView(UpdateView):
     template_name = 'management_system/request_fix.html'
     success_url = '../'
     # form = RequestSendForm
-    fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime','entry_datetime','exit_datetime', 'purpose_admission']
+    fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime', 'purpose_admission']
     cust = Customer
 
     def get_context_data(self, **kwarg):
