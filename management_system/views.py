@@ -4,15 +4,17 @@ from django.http import HttpResponseRedirect , QueryDict
 from django.shortcuts import redirect , get_object_or_404 , render
 from django.utils import timezone
 from django.urls import reverse,path
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 import datetime,pytz,random, string
 
 from django.views.generic.base import TemplateView
 from . import views
 from django.views.generic.edit import CreateView , UpdateView , FormView
-from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestSendForm
-from .forms import CustomerForm
-# from extra_views import InlineFormSet , UpdateWithInlinesView
+from django.views.generic import ListView
+from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm , RequestSendForm
+from .forms import CustomerForm, AdminLoginForm
 
 from .models import Request , Customer
 import copy
@@ -347,4 +349,58 @@ class RequestFixView(UpdateView):
         messages.success(self.request, '修正を受理しました')
 
         return 0
-    
+
+    def entry(self, **kwargs):
+        print('hello')
+        request_id = self.request.POST.get('request_id')
+        request = get_object_or_404(Request, pk=request_id)
+        request.entry_datetime = timezone.localtime()
+        request.save()
+
+        return request_id
+        # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
+
+    def exit(self, **kwargs):
+        return
+
+class AdminLoginView(LoginView):
+    form_class = AdminLoginForm
+    next = 'admin_list'
+    template_name = 'management_system/admin_login.html'
+
+class RequestListView(LoginRequiredMixin, ListView):
+    model = Request
+    login_url = 'admin_login'
+    template_name = 'management_system/admin_list.html'
+    ascending_order = False
+    searched_string = ""
+
+    def get_context_data(self, **kwargs):
+        context = super(RequestListView, self).get_context_data(**kwargs)
+
+        context["ascending_order"] = "true" if self.ascending_order == True else "false"
+        context["searched_string"] = self.searched_string
+
+        return context
+
+    def get_queryset(self):
+        results = self.model.objects.all()
+
+        q_name = self.request.GET.get('name')
+        q_order = self.request.GET.get('order')
+
+        if q_name is not None:
+            results = results.filter(email__organization_name__contains=q_name)
+            self.searched_string = q_name
+        else:
+            self.searched_string = ""
+
+        if q_order == "desce":
+            self.ascending_order = False
+            results = results.order_by("request_datetime").reverse()
+        elif q_order == "asce":
+            self.ascending_order = True
+            results = results.order_by("request_datetime")
+
+        return results
+

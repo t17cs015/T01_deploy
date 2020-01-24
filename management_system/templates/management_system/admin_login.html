@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %} Login {% endblock %}
+
+{% block main %}
+<form action="" method="POST">
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    {{ field }}
+    {{ field.errors }}
+    <hr>
+    {% endfor %}
+    <button type="submit">ろぐいん</button>
+    <input type="hidden" name="next" value="{{ next }}" />
+    {% csrf_token %}
+</form>
+{% endblock %}
+
+

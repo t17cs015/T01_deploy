@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %} List {% endblock %}
+
+{% block main %}
+<form method="get" action="" name="filter_form">
+    <div>
+        <span>組織名検索</span>
+        <input type="search" id="filter_name" name="name" placeholder="組織名" value="{{ searched_string }}">
+        <button id="filter">検索</button>
+    </div>
+    <div>
+        <span>ソート</span>
+        <select name="order" onchange="document.forms.filter_form.submit()">
+            <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
+            <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
+        </select>
+    </div>
+</form>
+<style type="text/css">
+<!--
+a { display:block; width:100%; height:100%; }
+-->
+</style>
+<table border="1">
+    <thead>
+        <tr>
+            <th rowspan="2">申請日時</th>
+            <th colspan="2">利用者情報</th>
+            <th colspan="4">入退館情報</th>
+        </tr>
+        <tr>
+            <th>組織名</th>
+            <th>氏名</th>
+            <th>入館予定日時</th>
+            <th>入館実績日時</th>
+            <th>退館予定日時</th>
+            <th>退館実績日時</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for request in object_list %}
+        <tr>
+            <td scope = "row"><a href="https://google.com/search?q={{ request.pk }}">{{ request.request_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.organization_name }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.name }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_entry_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.entry_datetime == None %}--{% endif %}
+                                             {% if request.entry_datetime != None %}{{ request.entry_datetime}}{% endif %}
+                                             </a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_exit_datetime }}</a></td>
+            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.exit_datetime == None %}--{% endif %}
+                                             {% if request.exit_datetime != None %}{{ request.exit_datetime}}{% endif %}
+                                             </a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+

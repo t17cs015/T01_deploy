@@ -1,5 +1,6 @@
 from django import forms  # @UnresolvedImport
 from .models import Request , Customer
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.validators import RegexValidator
 
 class CustomerForm(forms.ModelForm):
@@ -35,4 +36,10 @@ class RequestSendForm(forms.Form):
     scheduled_entry_datetime = forms.DateTimeField(label = '入館時間')
     scheduled_exit_datetime = forms.DateTimeField(label = '退館時間')
     purpose_admission = forms.CharField(label = '申請理由',max_length=255)
+
+class AdminLoginForm(AuthenticationForm):
+    def __init(self, *args, **kwargs):
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-ontral'
+            field.widget.attrs['placeholder'] = field.label
 
