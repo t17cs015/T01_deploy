@@ -5,7 +5,7 @@ from .views import AdminLoginView, RequestListView
 from . import views
 
 urlpatterns = [
-    path('main/', RequestMainView.as_view(), name='main'),
+    path('', RequestMainView.as_view(), name='main'),
     # ex: /polls/5/
     # path('<int:request_id>/', views.detail, name='detail'),
     # ex: /polls/5/results/
