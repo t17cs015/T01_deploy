@@ -258,10 +258,10 @@ class RequestFixLoginView(TemplateView):
             return HttpResponseRedirect(reverse('fixlogin'))
         
         # ここは未承認かの判定にしたい
-        # elif(request.entry_datetime!=None and request.exit_datetime!=None):
-        #     print('この申請は既に退館済みです')
-        #     messages.success(self.request, 'この申請は既に退館済みです')
-        #     return HttpResponseRedirect(reverse('login'))
+        if(request.approval!=0):
+            print('この申請は既に承認済みです')
+            messages.success(self.request, 'この申請は既に承認済みのため修正できません')
+            return HttpResponseRedirect(reverse('fixlogin'))
         
         else:
             print('login sucsess')
