@@ -1,6 +1,10 @@
 from django.urls import path
+<<<<<<< HEAD
 from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView
 from .views import AdminLoginView, RequestListView
+=======
+from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView, RequestFixView ,RequestFixLoginView
+>>>>>>> master
 
 from . import views
 
@@ -17,4 +21,7 @@ urlpatterns = [
     path('performance/<int:pk>/', RequestPerformanceView.as_view(),name='performance'), 
     path('admin/login/',AdminLoginView.as_view(),name='admin_login'),
     path('admin/list/',RequestListView.as_view(),name='admin_list'),
+    path('fix/login/',RequestFixLoginView.as_view(),name='fixlogin'),
+    path('fix/<int:pk>', RequestFixView.as_view(),name='fix'),
 ]
+
