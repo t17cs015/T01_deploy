@@ -410,9 +410,19 @@ class AdminApprovalView(TemplateView):
     template_name = 'management_system/admin_approval.html'
     success_url = ''
 
+    def form_valid(self,form):
+        print('form')
+        print(form)
+        return super().form_valid(form)
+
+    def form_invalid(self,form):
+        print('form')
+        print(form)
+        return super().form_invalid(form)
+
     def post(self, request, *args, **kwargs):
-            
-        print('entry')
+        request = get_object_or_404(Request,pk=kwargs.get('pk'))
+
         print('self')
         print(self)
         print('request')
@@ -422,20 +432,24 @@ class AdminApprovalView(TemplateView):
         print('kwargs')
         print(kwargs)
 
-        request = get_object_or_404(Request,pk=kwargs.get('pk'))
+        # if( context['form_message'] == '承認'):
+        #     print('apporororor')
+        # else:
+        #     print('notapprororo')
+
+
+
         if(request.entry_datetime==None):
             request.entry_datetime = timezone.localtime()
         elif(request.exit_datetime==None):
             request.exit_datetime = timezone.localtime()
         else:
             print('already logined')
-            return HttpResponseRedirect(reverse('main'))
+            return HttpResponseRedirect(reverse('admin_list'))
         request.save()
         print (request)
-        
-
-        return HttpResponseRedirect(reverse('login'))
-
+        return HttpResponseRedirect(reverse('admin_list'))
+    
     def get_context_data(self, **kwarg):
         context = super().get_context_data(**kwarg)
         print('getRequest')
@@ -449,15 +463,10 @@ class AdminApprovalView(TemplateView):
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
             customer = get_object_or_404(Customer,pk=request.email.pk)
             print(request)
-                        
+
             context['form_id'] = {'request_id':kwarg.get('pk')}
             context['form_request'] = request
             context['form_customer'] = customer
-            # if(request.entry_datetime == None):
-            #     context['form_message'] = '入館'
-            # elif(request.exit_datetime==None):
-            #     context['form_message'] = '退館'
-            # else:
-            #     print('already logined')
-
+            context['form_message'] = '承認'
+            
         return context
