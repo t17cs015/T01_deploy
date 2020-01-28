@@ -449,16 +449,15 @@ class AdminApprovalView(TemplateView):
             request = get_object_or_404(Request,pk=kwarg.get('pk'))
             customer = get_object_or_404(Customer,pk=request.email.pk)
             print(request)
-
-            
+                        
             context['form_id'] = {'request_id':kwarg.get('pk')}
             context['form_request'] = request
             context['form_customer'] = customer
-            if(request.entry_datetime == None):
-                context['form_message'] = '入館'
-            elif(request.exit_datetime==None):
-                context['form_message'] = '退館'
-            else:
-                print('already logined')
+            # if(request.entry_datetime == None):
+            #     context['form_message'] = '入館'
+            # elif(request.exit_datetime==None):
+            #     context['form_message'] = '退館'
+            # else:
+            #     print('already logined')
 
         return context

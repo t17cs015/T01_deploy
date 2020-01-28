@@ -3,8 +3,10 @@
  {% block title %} Performance {% endblock %}
 
  {% block main %}
- <form method='post' id='send'>
+ <form method='post' id='noapproval'action='{% url 'admin_approval' pk %}'>{% csrf_token %}</form>
+   <form method='post' id='approval'>
  {% csrf_token %}
+</form>
 
 <h4 class="ui horizontal divider header"><i class="bar chart icon"></i> 申請内容 </h4>
 <table class="ui definition table">
@@ -39,13 +41,7 @@
     </tr>
   </tbody>
 </table>
-{% ifequal form_message "入館" %}
-<button class="ui blue button" type = "submit/" value = 'enter' onclick='return confirm("入館します");' form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館 </font></font></button>
-<button class="ui black button" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館</font></font></button>
-{% else %}
-<button class="ui black button" type = "subumit/" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館</font></font></button>
-<button class="ui red button" value = 'enter' onclick='return confirm("退館します");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館 </font></font></button>
-{%endifequal%}
-</form>
+<button class="ui blue button" value = 'approval' form = 'approval' onclick='return confirm("承認しますがよろしいですか？");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">承認 </font></font></button>
+<button class="ui red button" value = 'noapproval' form = 'noapproval' onclick='return confirm("承認しませんがよろしいですか？");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">未承認 </font></font></button>
  {% endblock %}
 
