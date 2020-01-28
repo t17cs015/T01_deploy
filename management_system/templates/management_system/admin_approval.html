@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+ {% block title %} Performance {% endblock %}
+
+ {% block main %}
+ <form method='post' id='send'>
+ {% csrf_token %}
+
+<h4 class="ui horizontal divider header"><i class="bar chart icon"></i> 申請内容 </h4>
+<table class="ui definition table">
+  <tbody>
+    <tr>
+      <td class="two wide column">ID</td>
+      <td>{{form_id.request_id}}</td>
+    </tr>
+    <tr>
+      <td>sosikimei</td>
+      <td>{{form_customer.organization_name}} </td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td>{{form_customer.name}} </td>
+    </tr>
+    <tr>
+      <td>tellnumber</td>
+      <td>{{form_customer.tell_number}} </td>
+    </tr>
+    <tr>
+      <td>email</td>
+      <td>{{form_customer.email}} </td>
+    </tr>
+    <tr>
+      <td>入館予定日時</td>
+      <td>{{form_request.scheduled_entry_datetime}} </td>
+    </tr>
+    <tr>
+      <td>退館予定日時</td>
+      <td>{{form_request.scheduled_exit_datetime}}</td>
+    </tr>
+  </tbody>
+</table>
+{% ifequal form_message "入館" %}
+<button class="ui blue button" type = "submit/" value = 'enter' onclick='return confirm("入館します");' form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館 </font></font></button>
+<button class="ui black button" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館</font></font></button>
+{% else %}
+<button class="ui black button" type = "subumit/" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館</font></font></button>
+<button class="ui red button" value = 'enter' onclick='return confirm("退館します");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館 </font></font></button>
+{%endifequal%}
+</form>
+ {% endblock %}
+

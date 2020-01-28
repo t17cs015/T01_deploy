@@ -404,3 +404,61 @@ class RequestListView(LoginRequiredMixin, ListView):
 
         return results
 
+# 申請承認画面 
+class AdminApprovalView(TemplateView):
+    model = Request
+    template_name = 'management_system/admin_approval.html'
+    success_url = ''
+
+    def post(self, request, *args, **kwargs):
+            
+        print('entry')
+        print('self')
+        print(self)
+        print('request')
+        print(request)
+        print('args')
+        print(args)
+        print('kwargs')
+        print(kwargs)
+
+        request = get_object_or_404(Request,pk=kwargs.get('pk'))
+        if(request.entry_datetime==None):
+            request.entry_datetime = timezone.localtime()
+        elif(request.exit_datetime==None):
+            request.exit_datetime = timezone.localtime()
+        else:
+            print('already logined')
+            return HttpResponseRedirect(reverse('main'))
+        request.save()
+        print (request)
+        
+
+        return HttpResponseRedirect(reverse('login'))
+
+    def get_context_data(self, **kwarg):
+        context = super().get_context_data(**kwarg)
+        print('getRequest')
+
+        if( kwarg.get('pk') == None ):
+            print('get false')
+            messages.success(self.request, 'idに一致するものが存在しませんでした')
+            return context
+        else:  
+            print('getSucsess')
+            request = get_object_or_404(Request,pk=kwarg.get('pk'))
+            customer = get_object_or_404(Customer,pk=request.email.pk)
+            print(request)
+
+            
+            context['form_id'] = {'request_id':kwarg.get('pk')}
+            context['form_request'] = request
+            context['form_customer'] = customer
+            if(request.entry_datetime == None):
+                context['form_message'] = '入館'
+            elif(request.exit_datetime==None):
+                context['form_message'] = '退館'
+            else:
+                print('already logined')
+
+        return context
