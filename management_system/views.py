@@ -436,7 +436,17 @@ class AdminApprovalView(TemplateView):
 
         # 承認がクリックされた場合の処理
         if 'approval' in request.POST:
-            
+            requests = list(filter(lambda x:True if(req.scheduled_entry_datetime >= x.scheduled_entry_datetime and req.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            print(requests)
+            if(len(requests) != 0):
+                for req in requests:
+                    if(req.approval == 1):
+                        print('すでに申請されている時間帯なのでこの時間は申請できません')
+                        print(req)
+                        messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+                        return HttpResponseRedirect(reverse('admin_approval' , kwargs={'pk':kwargs.get('pk')}))
+
             print('承認します')
             req.approval = 1
             messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を承認しました')
