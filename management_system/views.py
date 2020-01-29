@@ -404,3 +404,79 @@ class RequestListView(LoginRequiredMixin, ListView):
 
         return results
 
+# 申請承認画面 
+class AdminApprovalView(TemplateView):
+    model = Request
+    template_name = 'management_system/admin_approval.html'
+    success_url = ''
+
+    def form_valid(self,form):
+        print('form')
+        print(form)
+        return super().form_valid(form)
+
+    def form_invalid(self,form):
+        print('form')
+        print(form)
+        return super().form_invalid(form)
+
+    def post(self, request, *args, **kwargs):
+        print('self')
+        print(self)
+        print('request')
+        print(request)
+        print(request.POST)
+        print('args')
+        print(args)
+        print('kwargs')
+        print(kwargs)
+        
+        # 承認データの取得
+        req = get_object_or_404(Request,pk=kwargs.get('pk'))
+
+        # 承認がクリックされた場合の処理
+        if 'approval' in request.POST:
+            requests = list(filter(lambda x:True if(req.scheduled_entry_datetime >= x.scheduled_entry_datetime and req.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            print(requests)
+            if(len(requests) != 0):
+                for req in requests:
+                    if(req.approval == 1):
+                        print('すでに申請されている時間帯なのでこの時間は申請できません')
+                        print(req)
+                        messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+                        return HttpResponseRedirect(reverse('admin_approval' , kwargs={'pk':kwargs.get('pk')}))
+
+            print('承認します')
+            req.approval = 1
+            messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を承認しました')
+        # 拒否がクリックされた場合の処理
+        if 'noapproval' in request.POST:
+            messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を拒否しました')
+            print('拒否します')
+
+
+        req.save()
+        print (req)
+        return HttpResponseRedirect(reverse('admin_list'))
+    
+    def get_context_data(self, **kwarg):
+        context = super().get_context_data(**kwarg)
+        print('getRequest')
+
+        if( kwarg.get('pk') == None ):
+            print('get false')
+            messages.success(self.request, 'idに一致するものが存在しませんでした')
+            return context
+        else:  
+            print('getSucsess')
+            request = get_object_or_404(Request,pk=kwarg.get('pk'))
+            customer = get_object_or_404(Customer,pk=request.email.pk)
+            print(request)
+
+            context['form_id'] = {'request_id':kwarg.get('pk')}
+            context['form_request'] = request
+            context['form_customer'] = customer
+            context['form_message'] = '承認'
+            
+        return context
