@@ -35,7 +35,25 @@ class RequestAddView(FormView):
             'form' : form
         }
         if self.request.POST.get('next', '') == 'confirm':
-            return render(self.request,'management_system/request_add_check.html' ,context)
+            req = RequestForm(self.request.POST).save(commit=False)
+            # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
+            # 及び退館時間も同様
+            # 以上の二点に該当するものをfilterで持ってくる
+            requests = list(filter(lambda x:True if(req.scheduled_entry_datetime >= x.scheduled_entry_datetime and req.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            print(requests)
+            hit = 0
+            if(len(requests) != 0):
+                for req in requests:
+                    if(req.approval == 1):
+                        hit = 1     
+                        print('すでに申請されている時間帯なのでこの時間は申請できません')
+                        print(req)
+                        context['form_message'] = '重複'
+            if(hit == 1):
+                messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+            return render(self.request, 'management_system/request_add_check.html', context)
+
         if self.request.POST.get('next', '') == 'back':
             return render(self.request, 'management_system/request_add.html', context)
         if self.request.POST.get('next', '') == 'create':
@@ -52,20 +70,6 @@ class RequestAddView(FormView):
                 return render(self.request, 'management_system/request_add.html', context)
             # 時間の判定
             # 承認済みの時間にかぶせて申請が入った場合のみはじく
-
-            # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
-            # 及び退館時間も同様
-            # 以上の二点に該当するものをfilterで持ってくる
-            requests = list(filter(lambda x:True if(req.scheduled_entry_datetime >= x.scheduled_entry_datetime and req.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
-            requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
-            print(requests)
-            if(len(requests) != 0):
-                for req in requests:
-                    if(req.approval == 1):
-                        print('すでに申請されている時間帯なのでこの時間は申請できません')
-                        print(req)
-                        messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
-                        return render(self.request, 'management_system/request_add.html', context)
 
             # emailに該当するものをすべて取得
             customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
