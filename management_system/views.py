@@ -421,33 +421,33 @@ class AdminApprovalView(TemplateView):
         return super().form_invalid(form)
 
     def post(self, request, *args, **kwargs):
-        request = get_object_or_404(Request,pk=kwargs.get('pk'))
-
         print('self')
         print(self)
         print('request')
         print(request)
+        print(request.POST)
         print('args')
         print(args)
         print('kwargs')
         print(kwargs)
+        
+        # 承認データの取得
+        req = get_object_or_404(Request,pk=kwargs.get('pk'))
 
-        # if( context['form_message'] == '承認'):
-        #     print('apporororor')
-        # else:
-        #     print('notapprororo')
+        # 承認がクリックされた場合の処理
+        if 'approval' in request.POST:
+            
+            print('承認します')
+            req.approval = 1
+            messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を承認しました')
+        # 拒否がクリックされた場合の処理
+        if 'noapproval' in request.POST:
+            messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を拒否しました')
+            print('拒否します')
 
 
-
-        if(request.entry_datetime==None):
-            request.entry_datetime = timezone.localtime()
-        elif(request.exit_datetime==None):
-            request.exit_datetime = timezone.localtime()
-        else:
-            print('already logined')
-            return HttpResponseRedirect(reverse('admin_list'))
-        request.save()
-        print (request)
+        req.save()
+        print (req)
         return HttpResponseRedirect(reverse('admin_list'))
     
     def get_context_data(self, **kwarg):
