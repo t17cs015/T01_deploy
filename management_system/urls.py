@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView, RequestFixView ,RequestFixLoginView , AdminApprovalView
+from .views import RequestAddView , RequestMainView ,RequestPerformanceView , RequestLoginView, RequestFixView ,RequestFixLoginView , AdminApprovalView,RequestAddFinishView
 from .views import AdminLoginView, RequestListView
 
 from . import views
 
 urlpatterns = [
     path('', RequestMainView.as_view(), name='main'),
+    path('add/finish/', RequestAddFinishView.as_view(),name='addfinish'), 
     path('add/', RequestAddView.as_view(),name='add'), 
     path('login/',RequestLoginView.as_view(),name='login'),
     path('performance/<int:pk>/', RequestPerformanceView.as_view(),name='performance'), 

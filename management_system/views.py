@@ -26,7 +26,7 @@ class RequestMainView(TemplateView):
 class RequestAddView(FormView):
     model = Request
     template_name = 'management_system/request_add.html'
-    success_url = '/management_system'
+    success_url = '/management_system/add/finish/'
     form_class = RequestSendForm
 
 
@@ -137,6 +137,10 @@ class RequestAddView(FormView):
 
         # req1.scheduled_entry_datetime = jp.localize(entryt)
         # obj1.scheduled_exit_datetime = jp.localize(exitt)
+
+# 完了後の画面
+class RequestAddFinishView(TemplateView):
+    template_name = 'management_system/request_add_finish.html'
         
 
 # 実績入力画面 (UC-02)
