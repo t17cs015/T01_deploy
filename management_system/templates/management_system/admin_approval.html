@@ -31,6 +31,18 @@
       <td>{{form_customer.email}} </td>
     </tr>
     <tr>
+      <td>request_datetime</td>
+      <td>{{form_request.request_datetime}} </td>
+    </tr>
+    <tr>
+      <td>approval</td>
+      <td>{{form_request.approval}}</td>
+    </tr>
+    <tr>
+      <td>password</td>
+      <td>{{form_request.password}} </td>
+    </tr>
+    <tr>
       <td>入館予定日時</td>
       <td>{{form_request.scheduled_entry_datetime}} </td>
     </tr>
@@ -38,16 +50,28 @@
       <td>退館予定日時</td>
       <td>{{form_request.scheduled_exit_datetime}}</td>
     </tr>
+    <tr>
+      <td>入館日時</td>
+      <td>{{form_request.entry_datetime}} </td>
+    </tr>
+    <tr>
+      <td>退館日時</td>
+      <td>{{form_request.exit_datetime}}</td>
+    </tr>
+    <tr>
+      <td>purpose_admission</td>
+      <td>{{form_request.purpose_admission}}</td>
+    </tr>
   </tbody>
 </table>
 
 {{ form_massage.as_hidden }}
-<form action="{% url  'admin_list' %}">
-  <button class='ui button grey' type='submit' name='next' value='back'>戻る</button>
-</form>
 <form>
   <button class="ui blue button" name = 'approval' form = 'approval' onclick='return confirm("承認しますがよろしいですか？");'>承認 </button>
   <button class="ui red button" name = 'noapproval' form = 'approval' onclick='return confirm("拒否しますがよろしいですか？");'>拒否</button>
+</form>
+<form action="{% url  'admin_list' %}">
+  <button class='ui button grey' type='submit' name='next' value='back'>戻る</button>
 </form>
  {% endblock %}
 
