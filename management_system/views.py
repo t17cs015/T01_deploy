@@ -46,12 +46,25 @@ class RequestAddView(FormView):
             if(len(requests) != 0):
                 for req in requests:
                     if(req.approval == 1):
-                        hit = 1     
-                        print('すでに申請されている時間帯なのでこの時間は申請できません')
-                        print(req)
-                        context['form_message'] = '重複'
+                        # listの判別
+                        cus_hit = 0
+                        cus = req.email
+                        if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                            # そのままcustomerを使う
+                            print(str(cus.id)+' 全件一致しました')
+                            customer = cus
+                            cus_hit = 1
+                        else:
+                            # Customerを入力のものと置き換える
+                            print(str(cus.id)+' このデータは全件一致しませんでした')
+                            hit = 1
             if(hit == 1):
                 messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+                context['form_message'] = '重複'
+                print('すでに申請されている時間帯なのでこの時間は申請できません')
+                print(req)
+            elif(cus_hit == 1):
+                messages.success(self.request, 'あなたの申請がこの時間に入っています')
             return render(self.request, 'management_system/request_add_check.html', context)
 
         if self.request.POST.get('next', '') == 'back':
@@ -138,7 +151,7 @@ class RequestAddView(FormView):
         # req1.scheduled_entry_datetime = jp.localize(entryt)
         # obj1.scheduled_exit_datetime = jp.localize(exitt)
 
-# 完了後の画面
+# 申請送信完了後の画面(UC-01)
 class RequestAddFinishView(TemplateView):
     template_name = 'management_system/request_add_finish.html'
         
