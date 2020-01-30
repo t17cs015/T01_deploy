@@ -184,7 +184,10 @@ class RequestLoginView(TemplateView):
             print('この申請は既に退館済みです')
             messages.success(self.request, 'この申請は既に退館済みです')
             return HttpResponseRedirect(reverse('login'))
-        
+        elif(request.approval == 0):
+            print('この申請は承認前のため入館できません')
+            messages.success(self.request, 'この申請は承認前のため入館できません')
+            return HttpResponseRedirect(reverse('login'))
         else:
             print('login sucsess')
             print('loginId:' + request_id)
