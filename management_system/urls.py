@@ -6,8 +6,8 @@ from . import views
 
 urlpatterns = [
     path('', RequestMainView.as_view(), name='main'),
-    path('add/finish/', RequestAddFinishView.as_view(),name='addfinish'), 
     path('add/', RequestAddView.as_view(),name='add'), 
+    path('add/finish/', RequestAddFinishView.as_view(),name='addfinish'), 
     path('login/',RequestLoginView.as_view(),name='login'),
     path('performance/<int:pk>/', RequestPerformanceView.as_view(),name='performance'), 
     path('admin/login/',AdminLoginView.as_view(),name='admin_login'),
