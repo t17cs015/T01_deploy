@@ -5,16 +5,30 @@
 <form method="get" action="" name="filter_form">
     <div>
         <span>組織名検索</span>
-        <input type="search" id="filter_name" name="name" placeholder="組織名" value="{{ searched_string }}">
-        <button id="filter">検索</button>
+        <input class="search" type="search" id="filter_name" name="name" placeholder="組織名" value="{{ searched_string }}">
+        <button class="btn btn-outline-info" id="filter">検索</button>
     </div>
-    <div>
+    <!-- <div>
         <span>ソート</span>
         <select name="order" onchange="document.forms.filter_form.submit()">
             <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
             <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
         </select>
-    </div>
+    </div> -->
+    <!-- さすがにこれはやりすぎだと思うのですぐ戻せるようになってます↑ -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+          <div class="form-group">
+            <!-- <label class="control-label">SELECT</label> -->
+              <div class="select-wrap select-circle">
+                <select name="order" onchange="document.forms.filter_form.submit()">
+                    <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
+                    <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
+              </select>
+            </div>
+          </div>
+         </div>
+      </div>
 </form>
 <style type="text/css">
 <!--
