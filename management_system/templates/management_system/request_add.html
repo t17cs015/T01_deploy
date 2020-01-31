@@ -8,16 +8,17 @@
 {% csrf_token %}
 
  <div class='countainer'>
-   <div class='header'>
-     申請情報を入力してください
-   </div>
+    <h5>
+      申請情報を入力してください
+    </h5>
    <table class='table'>
   {{form.as_table}}
 </table>
  </div>
 </form>
+
 <div>
-<button class='ui orange button' type='submit' name='next' value='confirm' form = 'send'>確認画面へ</button>
+<button class="btn btn-warning" type='submit' name='next' value='confirm' form = 'send'>確認画面へ</button>
         
 </div>
 {% endblock %}

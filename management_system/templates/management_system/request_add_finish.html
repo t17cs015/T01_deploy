@@ -2,9 +2,14 @@
 
 {% block main %}
 <!--finished sending your request-->
-<div>入館申請が完了しました</div>
+<br>
+<div>
+    <h5>
+        入館申請が完了しました
+    </h5>
+</div>
 <form action="{% url  'add' %}">
-    <button class='ui button grey' id = 'next'>初期画面に戻る</button>
+    <button class="btn btn-success" id = 'next'>初期画面に戻る</button>
 </form>
 
 {% endblock %}

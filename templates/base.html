@@ -6,9 +6,10 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{% block title %} DB管理システム{% endblock %}</title>
-	<link rel="stylesheet" type="text/css"
-		href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css">
-	<!-- <link rel="stylesheet" href="{% static "/bootstrap/css/bootstrap.min.css" %}"> -->
+	<!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css"> -->
+	<link rel="stylesheet" href="{% static "/bootstrap/css/bootstrap.min.css" %}">
+	<link rel="stylesheet" href="{% static '/management_system/style_add.css' %}">
+
 </head>
 
 {% if messages %}
@@ -27,9 +28,7 @@
 <body>
 	<div class="countainer">
 		<br>
-		<nav class="nav" >
-			<div class="ui header" style="margin: 0 auto">W社のデータベースセンター 管理システム</div>
-		</nav>
+			<h3>W社のデータベースセンター 管理システム</h3>
 		<br>
 	</div>
 	<center>
