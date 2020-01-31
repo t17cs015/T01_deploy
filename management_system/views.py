@@ -322,6 +322,7 @@ class RequestFixView(UpdateView):
         print('make forms:RexestFix')
         context = super().get_context_data(**kwarg)
         self.cust = Customer(context['object'].email)
+        
         return context
 
     def post(self, request, *args, **kwargs):

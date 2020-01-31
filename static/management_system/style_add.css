@@ -13,20 +13,21 @@ h1 {
   border-left: solid 5px #7db4e6;/*左線*/
   border-bottom: solid 3px #d7d7d7;/*下線*/
 }
-table{
+
+table.state{
     width: 100%;
     border-collapse: collapse;
   }
   
-  table tr{
+  table.state tr{
     border-bottom: solid 2px white;
   }
   
-  table tr:last-child{
+  table.state tr:last-child{
     border-bottom: none;
   }
   
-  table th{
+  table.state th{
     position: relative;
     text-align: left;
     width: 30%;
@@ -36,7 +37,7 @@ table{
     padding: 10px 0;
   }
   
-  table th:after{
+  table.state th:after{
     display: block;
     content: "";
     width: 0px;
@@ -49,7 +50,7 @@ table{
     border-bottom: 10px solid transparent;
   }
   
-  table td{
+  table.state td{
     text-align: left;
     width: 70%;
     text-align: center;
