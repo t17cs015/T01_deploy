@@ -1,3 +1,10 @@
+body{
+  background-color: #fcfda693;
+  padding: 50px;
+  text-align: center;
+  /* color: #fff; */
+}
+
 input{
     width: 90%; /*親要素いっぱい広げる*/
     padding: 3px 5px; /*ボックスを大きくする*/
