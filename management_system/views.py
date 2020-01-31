@@ -26,7 +26,7 @@ class RequestMainView(TemplateView):
 class RequestAddView(FormView):
     model = Request
     template_name = 'management_system/request_add.html'
-    success_url = '/management_system'
+    success_url = '/management_system/add/finish/'
     form_class = RequestSendForm
 
 
@@ -35,7 +35,40 @@ class RequestAddView(FormView):
             'form' : form
         }
         if self.request.POST.get('next', '') == 'confirm':
-            return render(self.request,'management_system/request_add_check.html' ,context)
+            req = RequestForm(self.request.POST).save(commit=False)
+            # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
+            # 及び退館時間も同様
+            # 以上の二点に該当するものをfilterで持ってくる
+            requests = list(filter(lambda x:True if(req.scheduled_entry_datetime >= x.scheduled_entry_datetime and req.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
+            print(requests)
+            hit = 0
+            cus_hit = 0
+            if(len(requests) != 0):
+                print('承認済みの申請と時間が被りました')
+                for req in requests:
+                    if(req.approval == 1):
+                        # listの判別
+                        cus = req.email
+                        if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                            # そのままcustomerを使う
+                            print(str(cus.id)+' 全件一致しました')
+                            print('あなたの申請がこの時間に入っています')
+                            customer = cus
+                            cus_hit = 1
+                        else:
+                            # Customerを入力のものと置き換える
+                            print(str(cus.id)+' このデータは全件一致しませんでした')
+                            hit = 1
+            if(hit == 1):
+                messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
+                context['form_message'] = '重複'
+                print('すでに申請されている時間帯なのでこの時間は申請できません')
+                print(req)
+            elif(cus_hit == 1):
+                messages.success(self.request, 'あなたの申請がこの時間に入っています')
+            return render(self.request, 'management_system/request_add_check.html', context)
+
         if self.request.POST.get('next', '') == 'back':
             return render(self.request, 'management_system/request_add.html', context)
         if self.request.POST.get('next', '') == 'create':
@@ -52,20 +85,6 @@ class RequestAddView(FormView):
                 return render(self.request, 'management_system/request_add.html', context)
             # 時間の判定
             # 承認済みの時間にかぶせて申請が入った場合のみはじく
-
-            # 申請されたものの入館時間より早い入館時間を持ち、遅い退館時間を持つもの
-            # 及び退館時間も同様
-            # 以上の二点に該当するものをfilterで持ってくる
-            requests = list(filter(lambda x:True if(req.scheduled_entry_datetime >= x.scheduled_entry_datetime and req.scheduled_entry_datetime < x.scheduled_exit_datetime) else False ,Request.objects.all()))
-            requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
-            print(requests)
-            if(len(requests) != 0):
-                for req in requests:
-                    if(req.approval == 1):
-                        print('すでに申請されている時間帯なのでこの時間は申請できません')
-                        print(req)
-                        messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
-                        return render(self.request, 'management_system/request_add.html', context)
 
             # emailに該当するものをすべて取得
             customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
@@ -110,7 +129,7 @@ class RequestAddView(FormView):
         ]
         print('send mail')
         send_mail(subject,massage,from_email,recipient_list)
-        messages.success(self.request, '申請を受理しました')
+        # messages.success(self.request, '申請を受理しました')
 
         return 0
 
@@ -133,6 +152,10 @@ class RequestAddView(FormView):
 
         # req1.scheduled_entry_datetime = jp.localize(entryt)
         # obj1.scheduled_exit_datetime = jp.localize(exitt)
+
+# 申請送信完了後の画面(UC-01)
+class RequestAddFinishView(TemplateView):
+    template_name = 'management_system/request_add_finish.html'
         
 
 # 実績入力画面 (UC-02)
@@ -163,7 +186,10 @@ class RequestLoginView(TemplateView):
             print('この申請は既に退館済みです')
             messages.success(self.request, 'この申請は既に退館済みです')
             return HttpResponseRedirect(reverse('login'))
-        
+        elif(request.approval == 0):
+            print('この申請は承認前のため入館できません')
+            messages.success(self.request, 'この申請は承認前のため入館できません')
+            return HttpResponseRedirect(reverse('login'))
         else:
             print('login sucsess')
             print('loginId:' + request_id)
