@@ -3,9 +3,16 @@
  {% block title %} Performance {% endblock %}
 
  {% block main %}
+<<<<<<< Updated upstream
  <form method='post' id='approval'>
    {% csrf_token %}
  </form>
+=======
+ 
+ <form method='post' action='{% url 'add' %}' >>
+   {% csrf_token %}
+   
+>>>>>>> Stashed changes
 
 <h4 class="ui horizontal divider header"><i class="bar chart icon"></i> 申請内容 </h4>
 <table class="ui definition table">
@@ -43,7 +50,13 @@
 
 {{ form_massage.as_hidden }}
 
+<<<<<<< Updated upstream
 <button class="ui blue button" name = 'approval' form = 'approval' onclick='return confirm("承認しますがよろしいですか？");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">承認 </font></font></button>
 <button class="ui red button" name = 'noapproval' form = 'approval' onclick='return confirm("拒否しますがよろしいですか？");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">拒否</font></font></button>
+=======
+<button class="ui blue button" value = 'approval' onclick='return confirm("承認しますがよろしいですか？");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">承認 </font></font></button>
+<button class="ui red button" value = 'noapproval' onclick='return confirm("承認しませんがよろしいですか？");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">未承認 </font></font></button>
+</form>
+>>>>>>> Stashed changes
  {% endblock %}
 
