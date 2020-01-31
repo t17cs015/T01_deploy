@@ -382,19 +382,6 @@ class RequestFixView(UpdateView):
 
         return 0
 
-    def entry(self, **kwargs):
-        print('hello')
-        request_id = self.request.POST.get('request_id')
-        request = get_object_or_404(Request, pk=request_id)
-        request.entry_datetime = timezone.localtime()
-        request.save()
-
-        return request_id
-        # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-
-    def exit(self, **kwargs):
-        return
-
 class AdminLoginView(LoginView):
     form_class = AdminLoginForm
     next = 'admin_list'
