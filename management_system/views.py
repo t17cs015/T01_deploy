@@ -43,15 +43,17 @@ class RequestAddView(FormView):
             requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
             print(requests)
             hit = 0
+            cus_hit = 0
             if(len(requests) != 0):
+                print('承認済みの申請と時間が被りました')
                 for req in requests:
                     if(req.approval == 1):
                         # listの判別
-                        cus_hit = 0
                         cus = req.email
                         if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
                             # そのままcustomerを使う
                             print(str(cus.id)+' 全件一致しました')
+                            print('あなたの申請がこの時間に入っています')
                             customer = cus
                             cus_hit = 1
                         else:
@@ -127,7 +129,7 @@ class RequestAddView(FormView):
         ]
         print('send mail')
         send_mail(subject,massage,from_email,recipient_list)
-        messages.success(self.request, '申請を受理しました')
+        # messages.success(self.request, '申請を受理しました')
 
         return 0
 

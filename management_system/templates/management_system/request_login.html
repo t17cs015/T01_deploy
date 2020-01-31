@@ -5,6 +5,9 @@
  {% block main %}
  <form method='post'>
  {% csrf_token %}
+ <div>
+    申請番号とパスワードを入力してください
+ </div>
  <table>
     {{ form_id.as_table }}
     {{ form_password.as_table }}
