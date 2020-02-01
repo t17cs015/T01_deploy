@@ -6,50 +6,55 @@
  <form action='{% url 'add' %}' method='post'>
      <!-- <div class='countainer'> -->
        <div class='header'>
-         申請情報を確認してください
+         <h5>
+           申請情報を確認してください
+         </h5>
         </div>
-        <table class='ui definition table'>
+        <table class="state">
           <tbody>
             <tr>
-              <td class='two wide column'>組織名</td>
+              <th>組織名</th>
               <td>{{form.organization_name.value}}</td>
             </tr>
             <tr>
-              <td>名前</td>
+              <th>名前</th>
               <td>{{form.name.value}} </td>
             </tr>
             <tr>
-              <td>電話番号</td>
+              <th>電話番号</th>
               <td>{{form.tell_number.value}} </td>
             </tr>
             <tr>
-              <td>email</td>
+              <th>email</th>
               <td>{{form.email.value}} </td>
             </tr>
-            <td>入館予定日時</td>
+            <th>入館予定日時</th>
             <td>{{form.scheduled_entry_datetime.value}} </td>
           </tr>
           <tr>
-            <td>退館予定日時</td>
+            <th>退館予定日時</th>
             <td>{{form.scheduled_exit_datetime.value}}</td>
           </tr>
           <tr>
-            <td>申請理由</td>
+            <th>申請理由</th>
             <td>{{form.purpose_admission.value}} </td>
           </tr>
           <tr>
           </tbody>
         </table>
-        <div>
+        <h5>
           以上の内容で入館申請を行います。問題なければ申請ボタンを推してください。
+        </h5>
+        <h5>
           再入力する場合は戻るボタンを推してください。(漢字ミスは仕様です)
-        </div>
+        </h5>
         <!-- <input type='submit'> -->
-        <button class='ui button grey' type='submit' name='next' value='back'>戻る</button>
         {% ifequal form_message "重複" %}
-        <button class='ui blue button' disabled="disabled" type='submit' name='next' value='create'>申請</button>
+        <button class="btn btn-danger" type='submit' name='next' value='back'>戻る</button>
+        <button class="btn btn-dark" disabled="disabled" type='submit' name='next' value='create'>申請</button>
         {% else %}
-        <button class='ui blue button' type='submit' name='next' value='create'>申請</button>
+        <button class="btn btn-secondary" type='submit' name='next' value='back'>戻る</button>
+        <button class="btn btn-primary" type='submit' name='next' value='create'>申請</button>
         {%endifequal%}
 
       {% for field in form %}

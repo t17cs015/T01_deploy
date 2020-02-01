@@ -13,6 +13,7 @@ from django.views.generic.base import TemplateView
 from . import views
 from django.views.generic.edit import CreateView , UpdateView , FormView
 from django.views.generic import ListView
+from django import forms
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm , RequestSendForm
 from .forms import CustomerForm, AdminLoginForm
 
@@ -29,6 +30,11 @@ class RequestAddView(FormView):
     success_url = '/management_system/add/finish/'
     form_class = RequestSendForm
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        # form.fields['name'].widget = forms.CheckboxSelectMultiple()
+        print(form.errors)
+        return form
 
     def form_valid(self,form):
         context = {
@@ -45,9 +51,9 @@ class RequestAddView(FormView):
             hit = 0
             cus_hit = 0
             if(len(requests) != 0):
-                print('承認済みの申請と時間が被りました')
                 for req in requests:
                     if(req.approval == 1):
+                        print('承認済みの申請と時間が被りました')
                         # listの判別
                         cus = req.email
                         if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
@@ -316,6 +322,7 @@ class RequestFixView(UpdateView):
         print('make forms:RexestFix')
         context = super().get_context_data(**kwarg)
         self.cust = Customer(context['object'].email)
+        
         return context
 
     def post(self, request, *args, **kwargs):
@@ -375,19 +382,6 @@ class RequestFixView(UpdateView):
         messages.success(self.request, '修正を受理しました')
 
         return 0
-
-    def entry(self, **kwargs):
-        print('hello')
-        request_id = self.request.POST.get('request_id')
-        request = get_object_or_404(Request, pk=request_id)
-        request.entry_datetime = timezone.localtime()
-        request.save()
-
-        return request_id
-        # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-
-    def exit(self, **kwargs):
-        return
 
 class AdminLoginView(LoginView):
     form_class = AdminLoginForm

@@ -6,41 +6,43 @@
  <form method='post' id='send'>
  {% csrf_token %}
 
-<h4 class="ui horizontal divider header"><i class="bar chart icon"></i> 申請内容 </h4>
-<table class="ui definition table">
+<h4>申請内容 </h4>
+
+<table class="state">
   <tbody>
     <tr>
-      <td class="two wide column">sosikimei</td>
+      <th>sosikimei</th>
       <td>{{form_customer.organization_name}} </td>
     </tr>
     <tr>
-      <td>name</td>
+      <th>name</th>
       <td>{{form_customer.name}} </td>
     </tr>
     <tr>
-      <td>tellnumber</td>
+      <th>tellnumber</th>
       <td>{{form_customer.tell_number}} </td>
     </tr>
     <tr>
-      <td>email</td>
+      <th>email</th>
       <td>{{form_customer.email}} </td>
     </tr>
     <tr>
-      <td>入館予定日時</td>
+      <th>入館予定日時</th>
       <td>{{form_request.scheduled_entry_datetime}} </td>
     </tr>
     <tr>
-      <td>退館予定日時</td>
+      <th>退館予定日時</th>
       <td>{{form_request.scheduled_exit_datetime}}</td>
     </tr>
   </tbody>
-</table>
+</table >
+<br>
 {% ifequal form_message "入館" %}
-<button class="ui blue button" type = "submit/" value = 'enter' onclick='return confirm("入館します");' form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館 </font></font></button>
-<button class="ui black button" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館</font></font></button>
+<button class="btn btn-primary" type = "submit/" value = 'enter' onclick='return confirm("入館します");' form = 'send'>入館 </button>
+<button class="btn btn-secondary" disabled="disabled">退館</button>
 {% else %}
-<button class="ui black button" type = "subumit/" disabled="disabled"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入館</font></font></button>
-<button class="ui red button" value = 'enter' onclick='return confirm("退館します");'form = 'send'><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">退館 </font></font></button>
+<button class="btn btn-secondary" type = "subumit/" disabled="disabled">入館</button>
+<button class="btn btn-danger" value = 'enter' onclick='return confirm("退館します");'form = 'send'>退館 </button>
 {%endifequal%}
 </form>
  {% endblock %}

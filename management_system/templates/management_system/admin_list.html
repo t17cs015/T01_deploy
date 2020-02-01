@@ -5,16 +5,30 @@
 <form method="get" action="" name="filter_form">
     <div>
         <span>組織名検索</span>
-        <input type="search" id="filter_name" name="name" placeholder="組織名" value="{{ searched_string }}">
-        <button id="filter">検索</button>
+        <input class="search" type="search" id="filter_name" name="name" placeholder="組織名" value="{{ searched_string }}">
+        <button class="btn btn-outline-info" id="filter">検索</button>
     </div>
-    <div>
+    <!-- <div>
         <span>ソート</span>
         <select name="order" onchange="document.forms.filter_form.submit()">
             <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
             <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
         </select>
-    </div>
+    </div> -->
+    <!-- さすがにこれはやりすぎだと思うのですぐ戻せるようになってます↑ -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+          <div class="form-group">
+            <!-- <label class="control-label">SELECT</label> -->
+              <div class="select-wrap select-circle">
+                <select name="order" onchange="document.forms.filter_form.submit()">
+                    <option value="desce" {% if ascending_order == "false" %}selected{% endif %}>降順</option>
+                    <option value="asce" {% if ascending_order == "true" %}selected{% endif %}>昇順</option>
+              </select>
+            </div>
+          </div>
+         </div>
+      </div>
 </form>
 <style type="text/css">
 <!--
@@ -41,14 +55,14 @@ a { display:block; width:100%; height:100%; }
     {% for request in object_list %}
         <tr>
             <td scope = "row"><a href='{% url 'admin_approval' request.pk %}'>{{ request.request_datetime }}</a></td>
-            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.organization_name }}</a></td>
-            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.email.name }}</a></td>
-            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_entry_datetime }}</a></td>
-            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.entry_datetime == None %}--{% endif %}
+            <td><a href='{% url 'admin_approval' request.pk %}'>{{ request.email.organization_name }}</a></td>
+            <td><a href='{% url 'admin_approval' request.pk %}'>{{ request.email.name }}</a></td>
+            <td><a href='{% url 'admin_approval' request.pk %}'>{{ request.scheduled_entry_datetime }}</a></td>
+            <td><a href='{% url 'admin_approval' request.pk %}'>{% if request.entry_datetime == None %}--{% endif %}
                                              {% if request.entry_datetime != None %}{{ request.entry_datetime}}{% endif %}
                                              </a></td>
-            <td><a href="https://google.com/search?q={{ request.pk }}">{{ request.scheduled_exit_datetime }}</a></td>
-            <td><a href="https://google.com/search?q={{ request.pk }}">{% if request.exit_datetime == None %}--{% endif %}
+            <td><a href='{% url 'admin_approval' request.pk %}'>{{ request.scheduled_exit_datetime }}</a></td>
+            <td><a href='{% url 'admin_approval' request.pk %}'>{% if request.exit_datetime == None %}--{% endif %}
                                              {% if request.exit_datetime != None %}{{ request.exit_datetime}}{% endif %}
                                              </a></td>
         </tr>
