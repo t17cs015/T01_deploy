@@ -3,6 +3,7 @@
 {% block title %} Fix {% endblock %}
 
 {% block main %}
+<h4>申請番号とパスワードを入力してください</h4>
 <form method="post">
 {% csrf_token %}
 <table class="state">
@@ -19,7 +20,7 @@
             氏名
         </th>
         <td>
-            <input type="text" name="name" value="{{object.email.name}}">            
+            <input type="text" name="name" value="{{object.email.name}}">
         </td>
     </tr>
     <tr>
