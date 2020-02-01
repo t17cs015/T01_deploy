@@ -1,0 +1,16 @@
+﻿{% extends 'base.html' %}
+
+{% block main %}
+<br>
+<div>
+    <h5>
+        入館日時をとして記録しました
+    </h5>
+</div>
+<form action="{% url 'login' %}">
+    <button class="btn btn-success" id = 'next'>初期画面に戻る</button>
+</form>
+
+{% endblock %}
+
+request_perfanck_check

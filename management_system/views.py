@@ -164,6 +164,13 @@ class RequestAddFinishView(TemplateView):
     template_name = 'management_system/request_add_finish.html'
     success_url = '/management_system/add'
            
+# 実績入力完了後の画面(UC-02)
+class RequestPerformanceFinishView(TemplateView):
+    template_name = 'management_system/request_performance_check.html'
+    success_url = '/management_system/login'
+
+    def post(self, request, *args, **kwargs):
+        return render(self.request, 'management_system/request_login.html', context)
 
 # 実績入力画面 (UC-02)
 class RequestLoginView(TemplateView):
@@ -234,12 +241,12 @@ class RequestPerformanceView(TemplateView):
             request.exit_datetime = timezone.localtime()
         else:
             print('already logined')
-            return HttpResponseRedirect(reverse('main'))
+            return HttpResponseRedirect(reverse('login'))
         request.save()
         print (request)
         
 
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(reverse('performancefinish'))
 
     def get_context_data(self, **kwarg):
         context = super().get_context_data(**kwarg)
