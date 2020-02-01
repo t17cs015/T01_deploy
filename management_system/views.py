@@ -169,6 +169,13 @@ class RequestPerformanceFinishView(TemplateView):
     template_name = 'management_system/request_performance_check.html'
     success_url = '/management_system/login'
 
+    def get_context_data(self, **kwarg):
+            context = super().get_context_data(**kwarg)
+            context['time'] = timezone.localtime()
+            print('time')
+            print(context['time'])
+            return context
+
     def post(self, request, *args, **kwargs):
         return render(self.request, 'management_system/request_login.html', context)
 
