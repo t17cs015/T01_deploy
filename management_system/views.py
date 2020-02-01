@@ -162,7 +162,8 @@ class RequestAddView(FormView):
 # 申請送信完了後の画面(UC-01)
 class RequestAddFinishView(TemplateView):
     template_name = 'management_system/request_add_finish.html'
-        
+    success_url = '/management_system/add'
+           
 
 # 実績入力画面 (UC-02)
 class RequestLoginView(TemplateView):
@@ -460,10 +461,10 @@ class AdminApprovalView(TemplateView):
             requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
             print(requests)
             if(len(requests) != 0):
-                for req in requests:
-                    if(req.approval == 1):
+                for requ in requests:
+                    if(requ.approval == 1):
                         print('すでに申請されている時間帯なのでこの時間は申請できません')
-                        print(req)
+                        print(requ)
                         messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
                         return HttpResponseRedirect(reverse('admin_approval' , kwargs={'pk':kwargs.get('pk')}))
 
@@ -472,6 +473,7 @@ class AdminApprovalView(TemplateView):
             messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を承認しました')
         # 拒否がクリックされた場合の処理
         if 'noapproval' in request.POST:
+            req.approval = 0
             messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を拒否しました')
             print('拒否します')
 
