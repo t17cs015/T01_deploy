@@ -340,7 +340,11 @@ class RequestFixView(UpdateView):
         
         return context
 
-    def post(self, request, *args, **kwargs):
+    def form_valid(self,form):
+        context = {
+            'form' : form
+        }
+
         self.object = self.get_object()
         print(self.object.email.email)
         print(self.request.POST.get('email'))
@@ -348,11 +352,11 @@ class RequestFixView(UpdateView):
             if(self.object.email.name == self.request.POST.get('name')):
                 if(self.object.email.organization_name == self.request.POST.get('organization_name')):
                     if(self.object.email.tell_number == self.request.POST.get('tell_number')):
-                        print('全件一致しました')
+                        print('以前申請したものと全件一致しました')
                         self.sendMail(self.object)
-                        return super().post(request, *args, **kwargs)
+                        return super().form_valid(form)
         
-        print('一致しなかったのでDBから顧客情報を持ってきます')
+        print('顧客情報が修正されたのでDBを確認します')
 
         # emailに該当するものをすべて取得
         customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
@@ -360,7 +364,7 @@ class RequestFixView(UpdateView):
         hit = 0
         for cus in customers:
             # print(cus.tell_number)
-            if(cus.name == self.cust.name and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+            if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
                 # そのままcustomerを使う
                 print(str(cus.id)+' 全件一致しました')
                 customer = cus
@@ -369,20 +373,23 @@ class RequestFixView(UpdateView):
                 # Customerを入力のものと置き換える
                 print(str(cus.id)+' このデータは全件一致しませんでした')
         
-        # 一致しなかったときにustomerをRequestに保持させる
+        # 一致しなかったときにcustomerをRequestに保持させる
         if(hit == 0):
-            customer = self.cust
+            # customer = self.cust
+            customer = CustomerForm(self.request.POST).save()
         
         # カスタマーの追加とそれを引数に渡す
-        cust = CustomerForm(self.request.POST).save()
-
-        self.object.email = cust
-        print(self.object.email)
+        print(hit)
+        self.object = form.save(commit=False)
+        self.object.email = customer
+        print(self.object.email.id)
+        print(self.object)
         self.object.save()
+
         self.sendMail(self.object)
-
-        return super().post(request, *args, **kwargs)
-
+        
+        return HttpResponseRedirect(self.get_success_url())
+    
     def sendMail(self, req):
         print('保存しました')
 
