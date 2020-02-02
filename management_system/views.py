@@ -328,7 +328,7 @@ class RequestFixLoginView(TemplateView):
 class RequestFixView(UpdateView):
     model = Request
     template_name = 'management_system/request_fix.html'
-    success_url = '../'
+    success_url = '../fix/login'
     # form = RequestSendForm
     fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime', 'purpose_admission']
     cust = Customer
