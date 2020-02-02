@@ -56,7 +56,7 @@ class RequestAddView(FormView):
                         print('承認済みの申請と時間が被りました')
                         # listの判別
                         cus = req.email
-                        if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                        if(cus.email == self.request.POST.get('email') and cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
                             # そのままcustomerを使う
                             print(str(cus.id)+' 全件一致しました')
                             print('あなたの申請がこの時間に入っています')
