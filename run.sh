@@ -4,8 +4,6 @@ if [[ $# == 0 ]]; then
     $0 runserver
 elif [[ $1 == "bklog" ]]; then
     $0 runserver > $(date "+%Y-%m-%S-%H:%M:%S").log
-    #pid=$!
-    #echo $pid
 elif [[ $1 == "rmcache" ]]; then
     rm *.log
 elif [[ $1 == "mig" ]]; then

@@ -13,6 +13,7 @@ from django.views.generic.base import TemplateView
 from . import views
 from django.views.generic.edit import CreateView , UpdateView , FormView
 from django.views.generic import ListView
+from django import forms
 from .forms import RequestForm , RequestIdForm , RequestPasswordForm , RequestGetForm , RequestSendForm
 from .forms import CustomerForm, AdminLoginForm
 
@@ -29,6 +30,11 @@ class RequestAddView(FormView):
     success_url = '/management_system/add/finish/'
     form_class = RequestSendForm
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        # form.fields['name'].widget = forms.CheckboxSelectMultiple()
+        print(form.errors)
+        return form
 
     def form_valid(self,form):
         context = {
@@ -45,12 +51,12 @@ class RequestAddView(FormView):
             hit = 0
             cus_hit = 0
             if(len(requests) != 0):
-                print('承認済みの申請と時間が被りました')
                 for req in requests:
                     if(req.approval == 1):
+                        print('承認済みの申請と時間が被りました')
                         # listの判別
                         cus = req.email
-                        if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+                        if(cus.email == self.request.POST.get('email') and cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
                             # そのままcustomerを使う
                             print(str(cus.id)+' 全件一致しました')
                             print('あなたの申請がこの時間に入っています')
@@ -122,7 +128,7 @@ class RequestAddView(FormView):
         print('保存しました')
 
         subject = ' W社DC利用申請受領のお知らせ'
-        massage = req.email.organization_name+' '+ req.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用申請を受け付け致しました。\n申請の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + req.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+req.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + req.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + req.email.name + '様の申請番号を以下に記載いたします。\n\n申請番号 : ' + str(req.pk) + '\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://example.com/3020\n\n------------------------------\n署名\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
+        massage = req.email.organization_name+' '+ req.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用申請を受け付け致しました。\n申請の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + req.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+req.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + req.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + req.email.name + '様の申請番号とパスワードを以下に記載いたします。\n\n申請番号 : ' + str(req.pk) + '\nパスワード : '+ str(req.password)  +'\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://t17cs015.pythonanywhere.com/management_system/fix/login/\n\n------------------------------\nW社 DCセンター管理部\ndbcenterw01@gmail.com\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
         from_email = 'dbcenterw1@gmail.com'
         recipient_list = [
             req.email.__str__()
@@ -156,7 +162,22 @@ class RequestAddView(FormView):
 # 申請送信完了後の画面(UC-01)
 class RequestAddFinishView(TemplateView):
     template_name = 'management_system/request_add_finish.html'
-        
+    success_url = '/management_system/add'
+           
+# 実績入力完了後の画面(UC-02)
+class RequestPerformanceFinishView(TemplateView):
+    template_name = 'management_system/request_performance_check.html'
+    success_url = '/management_system/login'
+
+    def get_context_data(self, **kwarg):
+            context = super().get_context_data(**kwarg)
+            context['time'] = timezone.localtime()
+            print('time')
+            print(context['time'])
+            return context
+
+    def post(self, request, *args, **kwargs):
+        return render(self.request, 'management_system/request_login.html', context)
 
 # 実績入力画面 (UC-02)
 class RequestLoginView(TemplateView):
@@ -227,12 +248,12 @@ class RequestPerformanceView(TemplateView):
             request.exit_datetime = timezone.localtime()
         else:
             print('already logined')
-            return HttpResponseRedirect(reverse('main'))
+            return HttpResponseRedirect(reverse('login'))
         request.save()
         print (request)
         
 
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(reverse('performancefinish'))
 
     def get_context_data(self, **kwarg):
         context = super().get_context_data(**kwarg)
@@ -307,7 +328,7 @@ class RequestFixLoginView(TemplateView):
 class RequestFixView(UpdateView):
     model = Request
     template_name = 'management_system/request_fix.html'
-    success_url = '../'
+    success_url = '../fix/login'
     # form = RequestSendForm
     fields = ['scheduled_entry_datetime', 'scheduled_exit_datetime', 'purpose_admission']
     cust = Customer
@@ -316,9 +337,14 @@ class RequestFixView(UpdateView):
         print('make forms:RexestFix')
         context = super().get_context_data(**kwarg)
         self.cust = Customer(context['object'].email)
+        
         return context
 
-    def post(self, request, *args, **kwargs):
+    def form_valid(self,form):
+        context = {
+            'form' : form
+        }
+
         self.object = self.get_object()
         print(self.object.email.email)
         print(self.request.POST.get('email'))
@@ -326,11 +352,11 @@ class RequestFixView(UpdateView):
             if(self.object.email.name == self.request.POST.get('name')):
                 if(self.object.email.organization_name == self.request.POST.get('organization_name')):
                     if(self.object.email.tell_number == self.request.POST.get('tell_number')):
-                        print('全件一致しました')
+                        print('以前申請したものと全件一致しました')
                         self.sendMail(self.object)
-                        return super().post(request, *args, **kwargs)
+                        return super().form_valid(form)
         
-        print('一致しなかったのでDBから顧客情報を持ってきます')
+        print('顧客情報が修正されたのでDBを確認します')
 
         # emailに該当するものをすべて取得
         customers = list(Customer.objects.filter(email=self.request.POST.get('email')))
@@ -338,7 +364,7 @@ class RequestFixView(UpdateView):
         hit = 0
         for cus in customers:
             # print(cus.tell_number)
-            if(cus.name == self.cust.name and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
+            if(cus.name == self.request.POST.get('name') and cus.organization_name == self.request.POST.get('organization_name') and cus.tell_number == self.request.POST.get('tell_number')):
                 # そのままcustomerを使う
                 print(str(cus.id)+' 全件一致しました')
                 customer = cus
@@ -347,25 +373,28 @@ class RequestFixView(UpdateView):
                 # Customerを入力のものと置き換える
                 print(str(cus.id)+' このデータは全件一致しませんでした')
         
-        # 一致しなかったときにustomerをRequestに保持させる
+        # 一致しなかったときにcustomerをRequestに保持させる
         if(hit == 0):
-            customer = self.cust
+            # customer = self.cust
+            customer = CustomerForm(self.request.POST).save()
         
         # カスタマーの追加とそれを引数に渡す
-        cust = CustomerForm(self.request.POST).save()
-
-        self.object.email = cust
-        print(self.object.email)
+        print(hit)
+        self.object = form.save(commit=False)
+        self.object.email = customer
+        print(self.object.email.id)
+        print(self.object)
         self.object.save()
+
         self.sendMail(self.object)
-
-        return super().post(request, *args, **kwargs)
-
+        
+        return HttpResponseRedirect(self.get_success_url())
+    
     def sendMail(self, req):
         print('保存しました')
 
         subject = ' W社DC利用修正受領のお知らせ'
-        massage = req.email.organization_name+' '+ req.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用修正を受け付け致しました。\n申請修正の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + req.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+req.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + req.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + req.email.name + '様の申請番号を以下に記載いたします。\n\n申請番号 : ' + str(req.pk) + '\n\n申請番号は入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://example.com/3020\n\n------------------------------\n署名\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
+        massage = req.email.organization_name+' '+ req.email.name + '様\n\n'+'お世話になっております。\nW社でございます。\n\n以下の内容でのデータセンターの利用修正を受け付け致しました。\n申請修正の承認につきましては、管理者が確認後再度連絡させていただきます。\n\n------利用申請内容------\n申請日時 : ' + req.request_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n入館予定日時 : '+req.scheduled_entry_datetime.strftime('%Y/%m/%d %H:%M:%S') +'\n退館予定日時 : ' + req.scheduled_exit_datetime.strftime('%Y/%m/%d %H:%M:%S') + '\n------------------------------\n\nそれに伴い' + req.email.name + '様の申請番号、パスワードは以前発行したとおりです\n'  + '\n\n申請番号、パスワードは入退館時に必要になりますので厳重に保管下さい。\n\nまた、利用申請が承認されていない状態であれば下記URLで申請内容の修正、取消が行えます。\n\nURL : http://t17cs015.pythonanywhere.com/management_system/fix/login/\n\n------------------------------\nW社 DCセンター管理部\ndbcenterw01@gmail.com\n------------------------------\n\n本メールは”データセンター入退館管理システム”からの自動送信です。\n'
         from_email = 'dbcenterw1@gmail.com'
         recipient_list = [
             req.email.__str__()
@@ -375,19 +404,6 @@ class RequestFixView(UpdateView):
         messages.success(self.request, '修正を受理しました')
 
         return 0
-
-    def entry(self, **kwargs):
-        print('hello')
-        request_id = self.request.POST.get('request_id')
-        request = get_object_or_404(Request, pk=request_id)
-        request.entry_datetime = timezone.localtime()
-        request.save()
-
-        return request_id
-        # return HttpResponseRedirect(reverse('performance', kwargs = {'pk':request_id}))
-
-    def exit(self, **kwargs):
-        return
 
 class AdminLoginView(LoginView):
     form_class = AdminLoginForm
@@ -466,10 +482,10 @@ class AdminApprovalView(TemplateView):
             requests += list(filter(lambda x:True if(req.scheduled_exit_datetime > x.scheduled_entry_datetime and req.scheduled_exit_datetime <= x.scheduled_exit_datetime) else False ,Request.objects.all()))
             print(requests)
             if(len(requests) != 0):
-                for req in requests:
-                    if(req.approval == 1):
+                for requ in requests:
+                    if(requ.approval == 1):
                         print('すでに申請されている時間帯なのでこの時間は申請できません')
-                        print(req)
+                        print(requ)
                         messages.success(self.request, 'すでに申請されている時間帯なのでこの時間は申請できません')
                         return HttpResponseRedirect(reverse('admin_approval' , kwargs={'pk':kwargs.get('pk')}))
 
@@ -478,6 +494,7 @@ class AdminApprovalView(TemplateView):
             messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を承認しました')
         # 拒否がクリックされた場合の処理
         if 'noapproval' in request.POST:
+            req.approval = 0
             messages.success(self.request, 'id:'+str(kwargs.get('pk'))+'の申請を拒否しました')
             print('拒否します')
 

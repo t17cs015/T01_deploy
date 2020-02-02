@@ -1,15 +1,16 @@
 ﻿{% extends 'base.html' %}
 
 {% block main %}
-<!--finished sending your request-->
 <br>
 <div>
     <h5>
-        入館申請が完了しました
+        日時を記録しました
     </h5>
 </div>
-<form action="{% url 'add' %}">
+<form action="{% url 'login' %}">
     <button class="btn btn-success" id = 'next'>初期画面に戻る</button>
 </form>
 
 {% endblock %}
+
+request_perfanck_check

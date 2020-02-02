@@ -3,20 +3,49 @@
 {% block title %} Fix {% endblock %}
 
 {% block main %}
+<h4>申請番号とパスワードを入力してください</h4>
 <form method="post">
 {% csrf_token %}
-<table>
+<table class="state">
+    <tr>
+        <th>
+            組織名
+        </th>
+        <td>
+            <input type="text" name="organization_name" value="{{object.email.organization_name}}">
+        </td>
+    </tr>
+    <tr>
+        <th>
+            氏名
+        </th>
+        <td>
+            <input type="text" name="name" value="{{object.email.name}}">
+        </td>
+    </tr>
+    <tr>
+        <th>
+            電話番号
+        </th>
+        <td>
+            <input type="text" name="tell_number" value="{{object.email.tell_number}}">
+
+        </td>
+    </tr>
+    <tr>
+        <th>
+            メールアドレス
+        </th>
+        <td>
+            <input type="text" name="email" value="{{object.email.email}}">
+        </td>
+    </tr>
     {{ form.as_table }}
-    <!-- {{ form_cutomer.as_table }} -->
+
 </table>
-{{ object.email.name }}
-<input type="text" name="name" value="{{object.email.name}}">
-<input type="text" name="organization_name" value="{{object.email.organization_name}}">
-<input type="text" name="tell_number" value="{{object.email.tell_number}}">
-<input type="text" name="email" value="{{object.email.email}}">
 <br>
       <!-- {{ pk.as_hidden }} -->
       {{ pk.as_table }}
-<input type="submit"/>
+<button type="submit" class="btn btn-primary">送信</button>
 </form>
 {% endblock %} 
