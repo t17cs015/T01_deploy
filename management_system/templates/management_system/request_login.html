@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
  {% block title %} Performance {% endblock %}
 
@@ -6,13 +6,18 @@
  <form method='post'>
  {% csrf_token %}
  <div>
-    申請番号とパスワードを入力してください
+    <h5>
+       申請番号とパスワードを入力してください
+    </h5>
  </div>
- <table>
+ <table class="state">
     {{ form_id.as_table }}
     {{ form_password.as_table }}
 </table>
- <input type='submit'/>
- </form>
+<br>
+<div>
+   <button class="btn btn-primary" type='submit'>ログイン</button>
+</div>
+</form>
  {% endblock %}
 
