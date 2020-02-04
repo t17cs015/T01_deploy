@@ -3,10 +3,9 @@
  {% block title %} Performance {% endblock %}
 
  {% block main %}
-
- <form method='post' action='{% url 'add' %}' >
+ <form method='post' id='approval'>
    {% csrf_token %}
-
+ </form>
 
 <h4 class="ui horizontal divider header"><i class="bar chart icon"></i> 申請内容 </h4>
 <table class="state">
@@ -67,8 +66,6 @@
 </table>
 
 {{ form_massage.as_hidden }}
-
-
 <br>
 <form>
   <button class="btn btn-primary" name = 'approval' form = 'approval' onclick='return confirm("承認しますがよろしいですか？");'>承認 </button>
@@ -78,6 +75,5 @@
 <form action="{% url  'admin_list' %}">
   <button class='btn btn-secondary' type='submit' name='next' value='back'>戻る</button>
 </form>
-
  {% endblock %}
 
